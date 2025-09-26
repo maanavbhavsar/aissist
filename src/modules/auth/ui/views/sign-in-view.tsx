@@ -6,7 +6,6 @@ import {zodResolver} from "@hookform/resolvers/zod";
 
 import{useForm} from "react-hook-form";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import{Button} from "@/components/ui/button";
@@ -15,6 +14,8 @@ import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import{Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useRouter } from "next/navigation";
+import {FaGoogle, FaGithub} from "react-icons/fa";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -25,7 +26,6 @@ const formSchema = z.object({
 
 export const SignInView = () => {
 
-    const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
@@ -35,12 +35,12 @@ export const SignInView = () => {
             password: "",
         },
     });
-
+    const router = useRouter();
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setPending(true);
         setError(null);
         try {
-            await authClient.signIn.email({email: data.email, password: data.password});
+            await authClient.signIn.email({email: data.email, password: data.password, callbackURL: "/"});
             setPending(false);
             router.push("/");
         } catch (error) {
@@ -56,6 +56,25 @@ export const SignInView = () => {
             }
         }
     };
+
+    const onSocial = (provider: "google" | "github") => {
+        authClient.signIn.social({
+            provider: provider, 
+            callbackURL: "/"
+        },
+        {
+            onSuccess: () => {
+                setPending(false);
+            },
+            onError: (error) => {
+                setPending(false);
+                const errorMessage = error && typeof error === 'object' && 'message' in error ? (error as {message: string}).message : 'Authentication failed';
+                setError(errorMessage);
+            }
+        }
+    );
+    };
+
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
@@ -111,11 +130,11 @@ export const SignInView = () => {
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Button disabled={pending} variant="outline" type="button" className="w-full">
-                                        Google
+                                    <Button disabled={pending} onClick={() => authClient.signIn.social({provider: "google"})} variant="outline" type="button" className="w-full">
+                                        <FaGoogle />
                                     </Button>
-                                    <Button disabled={pending} variant="outline" type="button" className="w-full">
-                                        GitHub
+                                    <Button disabled={pending} onClick={() => authClient.signIn.social({provider: "github"})} variant="outline" type="button" className="w-full">
+                                        <FaGithub />
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm text-muted-foreground">
