@@ -48,9 +48,9 @@ export const SignUpView = () => {
         setPending(true);
         setError(null);
         try {
-            await authClient.signUp.email({name: data.name, email: data.email, password: data.password, callbackURL: "/"});
+            await authClient.signUp.email({name: data.name, email: data.email, password: data.password, callbackURL: "/dashboard"});
             setPending(false);
-            router.push("/");       
+            router.push("/dashboard");       
         } catch (error) {
             const message = error instanceof Error ? String(error.message ?? "") : String(error ?? "");
             // Basic heuristics to set field-specific errors
@@ -68,7 +68,7 @@ export const SignUpView = () => {
     const onSocial = (provider: "google" | "github") => {
         authClient.signIn.social({
             provider: provider, 
-            callbackURL: "/"
+            callbackURL: "/dashboard"
         },
         {
             onSuccess: () => {
@@ -158,8 +158,8 @@ export const SignUpView = () => {
                                         )}
                                     />
                                 </div>
-                                <Button type="submit" className="w-full" disabled={pending}>
-                                    Sign In  
+                                <Button type="submit" className="w-full bg-cyan-500 hover:bg-cyan-600 text-white" disabled={pending}>
+                                    Sign Up  
                                 </Button>
                                 <div className="after:border-border relative text-center text-sm after:absolute after:insert-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                                     <span className="bg-background px-2 text-muted-foreground relative z-10 px-4">
@@ -182,7 +182,7 @@ export const SignUpView = () => {
                         </Form>
                     </div>
                     <div className="bg-gradient-to-br from-cyan-700 to-cyan-900 relative flex flex-col gap-y-4 justify-center items-center p-4">
-                        <img src="/aissist-logo.png" alt="AISSIST" className="h-[375px] w-[375px]" />
+                        <img src="/aissist_colored_only.png" alt="AISSIST" className="h-[100px] w-[100px] hover:drop-shadow-[0_0_20px_rgba(6,182,212,0.8)] transition-all duration-300 cursor-pointer" />
                     </div>
                 </CardContent>
             </Card>
