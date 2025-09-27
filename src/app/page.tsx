@@ -10,8 +10,10 @@ const Page = async () => {
 
   if (!session) {
     redirect("/sign-in");
+  } else {
+    // If user is authenticated, redirect to dashboard
+    redirect("/dashboard");
   }
-  return <HomeView />;
 };
 
 export default Page;
