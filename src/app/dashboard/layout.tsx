@@ -119,7 +119,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               </a>
             </li>
             <li>
-              <a href="/dashboard" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-colors`}>
+              <a href="/dashboard/agents" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-colors`}>
                 <Briefcase className="w-5 h-5" />
                 {!isSidebarCollapsed && <span>Agents</span>}
               </a>
