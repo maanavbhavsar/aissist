@@ -1,12 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import {
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandItem,
-} from "@/components/ui/command";
+import { ResponsiveDialog } from "@/components/responsive-dialog";
 
 interface DashboardCommandProps {
   open: boolean;
@@ -15,11 +10,15 @@ interface DashboardCommandProps {
 
 export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
-      <CommandInput placeholder="Find a meeting or agent..." />
-      <CommandList>
-        <CommandItem>Test</CommandItem>
-      </CommandList>
-    </CommandDialog>
+    <ResponsiveDialog
+      open={open}
+      onOpenChange={setOpen}
+      description="Search for meetings and agents"
+      placeholder="Find a meeting or agent..."
+    >
+      <div className="space-y-2">
+        {/* Search results will appear here when implemented */}
+      </div>
+    </ResponsiveDialog>
   );
 }
