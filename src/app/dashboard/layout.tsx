@@ -94,7 +94,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen flex bg-background">
       {/* Sidebar */}
-      <div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} bg-slate-900 text-white flex flex-col transition-all duration-300`}>
+      <div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} bg-slate-900 text-white flex flex-col transition-all duration-300 min-h-screen`}>
         {/* Logo Section */}
         <div className={`${isSidebarCollapsed ? 'p-4' : 'p-6'} border-b border-slate-800`}>
           <div className="flex items-center justify-center">
@@ -133,9 +133,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </ul>
         </nav>
 
-        {/* User Profile */}
-        <div className={`${isSidebarCollapsed ? 'p-2' : 'p-6'}`}>
-          <div className="relative" ref={userMenuRef}>
+        {/* User Profile - Push to bottom */}
+        <div className="mt-auto">
+          <div className={`${isSidebarCollapsed ? 'p-2 pb-4' : 'p-6 pb-4'}`}>
+            <div className="relative" ref={userMenuRef}>
             <button
               onClick={toggleUserMenu}
               className={`w-full border border-slate-700 rounded-lg bg-slate-800 hover:bg-slate-750 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 ${isSidebarCollapsed ? 'p-2' : 'p-4'}`}
@@ -186,6 +187,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </div>
               </div>
             )}
+            </div>
           </div>
         </div>
       </div>
