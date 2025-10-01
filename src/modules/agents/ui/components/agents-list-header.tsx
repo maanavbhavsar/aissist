@@ -15,8 +15,8 @@ export const AgentsListHeader = () => {
         <NewAgentDialog open={open} onOpenChange={setDialogOpen} />
         <div className="py-4 px-4 md:px-8 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-                <h5 className="font-medium text-xl">My Agents</h5>
-                <Button onClick={() => setDialogOpen(true)}>
+                <h5 className="font-medium text-xl text-white">My Agents</h5>
+                <Button onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
                     <PlusIcon /> New Agent
                 </Button>
             </div>
@@ -27,7 +27,7 @@ export const AgentsListHeader = () => {
                     placeholder="Search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 border-slate-600 bg-slate-800/50 text-white placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400"
                 />
             </div>
         </div>

@@ -28,7 +28,7 @@ export default function RootLayout({
     <TRPCReactProvider>
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 min-h-screen`}
       >
         <Toaster />
         {children}

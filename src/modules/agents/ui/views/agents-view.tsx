@@ -5,6 +5,9 @@ import { ErrorState } from "@/components/error-state";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { DataTable } from "../components/data-table";
+import { columns } from "../components/columns";
+import { EmptyState } from "@/components/empty-state";
 
 export const AgentsView = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -12,7 +15,7 @@ export const AgentsView = () => {
     const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
     
     return (
-        <div className="space-y-6">
+        <div className="flex-1 pb-4 px-8 flex flex-col gap-y-4">
             {/* Responsive Search Dialog */}
             <ResponsiveDialog
                 open={isSearchOpen}
@@ -24,16 +27,18 @@ export const AgentsView = () => {
                 </div>
             </ResponsiveDialog>
 
-            {/* Agent Data Display */}
-            <div className="bg-white rounded-lg border border-slate-200 p-6">
-                <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Agent Data</h3>
-                    <p className="text-sm text-slate-600">Raw JSON data from database:</p>
-                </div>
-                <pre className="bg-slate-50 p-4 rounded-lg overflow-x-auto text-sm">
-                    {JSON.stringify(data, null, 2)}
-                </pre>
-            </div>
+            {/* Data Table */}
+            <DataTable 
+                columns={columns} 
+                data={data} 
+                onRowClick={(agent) => {
+                    console.log('Agent clicked:', agent);
+                    // TODO: Navigate to agent details or open edit dialog
+                {data.length === 0 && (
+                    <EmptyState title="No agents found" description="Create a new agent to get started. Join your meetings . Each agent will follow your instructions and will interact with you during the call." />
+                )}
+                }}
+            />
         </div>
     );
 };
