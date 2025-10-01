@@ -14,6 +14,7 @@ interface ResponsiveDialogProps {
   trigger?: ReactNode;
   children: ReactNode;
   placeholder?: string;
+  showSearch?: boolean;
 }
 
 export function ResponsiveDialog({
@@ -23,7 +24,8 @@ export function ResponsiveDialog({
   description,
   trigger,
   children,
-  placeholder = "Find a meeting or agent..."
+  placeholder = "Find a meeting or agent...",
+  showSearch = true
 }: ResponsiveDialogProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -82,14 +84,16 @@ export function ResponsiveDialog({
                 </div>
 
                 {/* Search Input */}
-                <div className="relative mb-4">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    type="text"
-                    placeholder={placeholder}
-                    className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                  />
-                </div>
+                {showSearch && (
+                  <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="text"
+                      placeholder={placeholder}
+                      className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    />
+                  </div>
+                )}
 
                 {/* Content */}
                 <div className="max-h-64 overflow-y-auto">
@@ -138,14 +142,16 @@ export function ResponsiveDialog({
           </div>
 
           {/* Search Input */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <input
-              type="text"
-              placeholder={placeholder}
-              className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-            />
-          </div>
+          {showSearch && (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <input
+                type="text"
+                placeholder={placeholder}
+                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+              />
+            </div>
+          )}
 
           {/* Content */}
           <div className="max-h-64 overflow-y-auto">
