@@ -92,7 +92,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       {/* Sidebar */}
       <div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} bg-slate-900 text-white flex flex-col transition-all duration-300 min-h-screen`}>
         {/* Logo Section */}
@@ -201,10 +201,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
         
         {/* Page Content */}
-        <div className="flex-1 bg-slate-50">
+        <div className="flex-1 bg-transparent">
           <div className="p-6">
             <div className="mb-6">
-              <h1 className="text-2xl font-semibold text-slate-800">
+              <h1 className="text-2xl font-semibold text-white">
                 Welcome back, {session.user.name}
               </h1>
             </div>

@@ -73,8 +73,8 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <Avatar className="border size-16">
-                    <AvatarFallback className="text-2xl">
+                <Avatar className="border border-blue-200 size-16">
+                    <AvatarFallback className="text-2xl bg-blue-50 text-blue-700">
                         {getAgentEmoji(agentName)}
                     </AvatarFallback>
                 </Avatar>
@@ -112,8 +112,8 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
                     )}
                 />
                 <div className="flex justify-between gap-2">
-                    <Button type="submit" disabled={isPending}>{isEdit ? "Update" : "Create"} Agent</Button>
-                    <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+                    <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white">{isEdit ? "Update" : "Create"} Agent</Button>
+                    <Button type="button" variant="outline" onClick={onCancel} className="border-blue-200 text-blue-700 hover:bg-blue-50">Cancel</Button>
                 </div>
             </form>
         </Form>
