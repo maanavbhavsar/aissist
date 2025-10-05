@@ -2,13 +2,24 @@
 
 import { useState } from "react";
 import { NewAgentDialog } from "./new-agent-dialog";
+import { AgentsSearchFilter } from "./agents-search-filter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { PlusIcon, SearchIcon } from "lucide-react";
+import { PlusIcon, XCircleIcon } from "lucide-react";
+import { useAgentsFilters } from "../../hooks/use-agents-filters";
+import { DEFAULT_PAGE } from "@/constants";
 
 export const AgentsListHeader = () => {
     const [open, setDialogOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [filters, setFilters] = useAgentsFilters();
+
+    const isAnyFilterModified = !!filters.search;
+
+    const clearFilters = () => {
+        setFilters({
+            search: "",
+            page: DEFAULT_PAGE,
+        });
+    };
 
     return (
         <> 
@@ -20,15 +31,18 @@ export const AgentsListHeader = () => {
                     <PlusIcon /> New Agent
                 </Button>
             </div>
-            <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
-                <Input
-                    type="text"
-                    placeholder="Search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 border-slate-600 bg-slate-800/50 text-white placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-400"
-                />
+            <div className="flex items-center gap-2 p-1">
+                <AgentsSearchFilter />
+                {isAnyFilterModified && (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={clearFilters}
+                    >
+                        <XCircleIcon className="h-4 w-4" />
+                        Clear
+                    </Button>
+                )}
             </div>
         </div>
         </>

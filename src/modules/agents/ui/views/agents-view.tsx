@@ -8,11 +8,14 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { DataTable } from "../components/data-table";
 import { columns } from "../components/columns";
 import { EmptyState } from "@/components/empty-state";
+import { useAgentsFilters } from "../../hooks/use-agents-filters";
+import { DataPagination } from "../components/data-pagination";
 
 export const AgentsView = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const trpc = useTRPC();
-    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
+    const [filters, setFilters] = useAgentsFilters();
+    const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions(filters));
     
     return (
         <div className="flex-1 pb-4 px-8 flex flex-col gap-y-4">
@@ -30,15 +33,23 @@ export const AgentsView = () => {
             {/* Data Table */}
             <DataTable 
                 columns={columns} 
-                data={data} 
+                data={data.items} 
                 onRowClick={(agent) => {
                     console.log('Agent clicked:', agent);
                     // TODO: Navigate to agent details or open edit dialog
-                {data.length === 0 && (
-                    <EmptyState title="No agents found" description="Create a new agent to get started. Join your meetings . Each agent will follow your instructions and will interact with you during the call." />
-                )}
                 }}
             />
+
+            {/* Pagination */}
+            <DataPagination 
+                page={filters.page}
+                totalPages={data.totalPages}
+                onPageChange={(page) => setFilters({ page })}
+            />
+
+            {data.items.length === 0 && (
+                <EmptyState title="No agents found" description="Create a new agent to get started. Join your meetings. Each agent will follow your instructions and will interact with you during the call." />
+            )}
         </div>
     );
 };
