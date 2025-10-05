@@ -34,14 +34,15 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     const [agentName, setAgentName] = useState(initialValues.name);
     const createAgent = useMutation(trpc.agents.create.mutationOptions({
         onSuccess: async () => {
-            await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions());
+            await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
             if(initialValues?.id) {
                 await queryClient.invalidateQueries(trpc.agents.getOne.queryOptions({ id: initialValues.id }));
             }
             onSuccess?.();
         },
-        onError: () => {
-            toast.error("Failed to create agent");
+        onError: (error) => {
+            console.error("Agent creation error:", error);
+            toast.error(`Failed to create agent: ${error.message || "Unknown error"}`);
             // TODO: Handle error, redirect to "/upgrade"
         },
     }));
@@ -58,14 +59,22 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     const isPending = createAgent.isPending;
 
     const onSubmit = (values: z.infer<typeof agentsInsertSchema>) => {
+        console.log("Form submitted with values:", values);
+        console.log("Is edit mode:", isEdit);
+        
         if (isEdit) {
             console.log("TODO: Update agent");
         }
         else {
+            console.log("Creating new agent...");
             createAgent.mutate(values, {
                 onSuccess: () => {
+                    console.log("Agent created successfully");
                     onSuccess?.();
                 },
+                onError: (error) => {
+                    console.error("Agent creation failed:", error);
+                }
             });
         }
     }

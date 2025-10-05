@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { TRPCReactProvider } from "@/trpc/client";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -26,14 +27,16 @@ export default function RootLayout({
 }>) {
   return (
     <TRPCReactProvider>
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 min-h-screen`}
-      >
-        <Toaster />
-        {children}
-      </body>
-    </html>
+      <NuqsAdapter>
+        <html lang="en">
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 min-h-screen`}
+          >
+            <Toaster />
+            {children}
+          </body>
+        </html>
+      </NuqsAdapter>
     </TRPCReactProvider>
   );
 }

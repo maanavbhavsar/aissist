@@ -55,10 +55,7 @@ export function DataTable<TData, TValue>({
         </Table>
       ) : (
         <div className="flex items-center justify-center min-h-[400px]">
-          <EmptyState 
-            title="Create your first agent" 
-            description="Create an agent to join your meetings. Each agent will follow your instructions and can interact with participants during the call." 
-          />
+          <div className="text-slate-400 text-sm">No data to display</div>
         </div>
       )}
     </div>
