@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { ResponsiveDialog } from "@/components/responsive-dialog";
@@ -13,6 +14,7 @@ import { DataPagination } from "../components/data-pagination";
 
 export const AgentsView = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const router = useRouter();
     const trpc = useTRPC();
     const [filters, setFilters] = useAgentsFilters();
     const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions(filters));
@@ -35,8 +37,7 @@ export const AgentsView = () => {
                 columns={columns} 
                 data={data.items} 
                 onRowClick={(agent) => {
-                    console.log('Agent clicked:', agent);
-                    // TODO: Navigate to agent details or open edit dialog
+                    router.push(`/dashboard/agents/${agent.id}`);
                 }}
             />
 

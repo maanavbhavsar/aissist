@@ -7,11 +7,12 @@ import { eq, and, like, desc, count } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
 import { nanoid } from "nanoid";
+import { TRPCError } from "@trpc/server";
 
 export const agentsRouter = createTRPCRouter({
     getOne: protectedProcedure.input(z.object({
         id: z.string(),
-    })).query(async ({input}) => {
+    })).query(async ({input, ctx}) => {
         const [existingAgent] = await db.select({
             id: agent.id,
             name: agent.name,
@@ -20,7 +21,10 @@ export const agentsRouter = createTRPCRouter({
             createdAt: agent.createdAt,
             updatedAt: agent.updatedAt,
             meetingCount: sql<number>`5`.as('meetingCount')
-        }).from(agent).where(eq(agent.id, input.id));
+        }).from(agent).where(and(eq(agent.id, input.id), eq(agent.userId, ctx.auth.user.id)));
+        if (!existingAgent) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
+        }
         return existingAgent;
     }),
     getMany: protectedProcedure.input(z.object({
