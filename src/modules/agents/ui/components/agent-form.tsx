@@ -1,7 +1,7 @@
 import type { AgentGetOne } from "../../types";
 import { useTRPC } from "@/trpc/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { agentsInsertSchema } from "../../schemas";
+import { agentsInsertSchema, agentsUpdateSchema } from "../../schemas";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -35,14 +35,26 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     const createAgent = useMutation(trpc.agents.create.mutationOptions({
         onSuccess: async () => {
             await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
-            if(initialValues?.id) {
-                await queryClient.invalidateQueries(trpc.agents.getOne.queryOptions({ id: initialValues.id }));
-            }
+            // TODO: invalidate free tier usage
             onSuccess?.();
         },
         onError: (error) => {
             console.error("Agent creation error:", error);
             toast.error(`Failed to create agent: ${error.message || "Unknown error"}`);
+            // TODO: Handle error, redirect to "/upgrade"
+        },
+    }));
+
+    const updateAgent = useMutation(trpc.agents.update.mutationOptions({
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(trpc.agents.getMany.queryOptions({}));
+            await queryClient.invalidateQueries(trpc.agents.getOne.queryOptions({ id: initialValues.id }));
+            // TODO: invalidate free tier usage
+            onSuccess?.();
+        },
+        onError: (error) => {
+            console.error("Agent update error:", error);
+            toast.error(`Failed to update agent: ${error.message || "Unknown error"}`);
             // TODO: Handle error, redirect to "/upgrade"
         },
     }));
@@ -56,14 +68,23 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
     })
 
     const isEdit = !!initialValues?.id;
-    const isPending = createAgent.isPending;
+    const isPending = createAgent.isPending || updateAgent.isPending;
 
     const onSubmit = (values: z.infer<typeof agentsInsertSchema>) => {
         console.log("Form submitted with values:", values);
         console.log("Is edit mode:", isEdit);
         
         if (isEdit) {
-            console.log("TODO: Update agent");
+            console.log("Updating agent...");
+            updateAgent.mutate({ ...values, id: initialValues.id }, {
+                onSuccess: () => {
+                    console.log("Agent updated successfully");
+                    onSuccess?.();
+                },
+                onError: (error) => {
+                    console.error("Agent update failed:", error);
+                }
+            });
         }
         else {
             console.log("Creating new agent...");
