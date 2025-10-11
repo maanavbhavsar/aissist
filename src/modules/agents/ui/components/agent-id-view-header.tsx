@@ -58,13 +58,13 @@ export function AgentIdViewHeader({
             <MoreVertical />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={onEdit}>
-            <Pencil className="size-4 text-black" />
+        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+          <DropdownMenuItem onClick={onEdit} className="text-white hover:bg-slate-700 focus:bg-slate-700">
+            <Pencil className="size-4 text-blue-400" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onRemove}>
-            <Trash2 className="size-4 text-black" />
+          <DropdownMenuItem onClick={onRemove} className="text-white hover:bg-slate-700 focus:bg-slate-700">
+            <Trash2 className="size-4 text-red-400" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
