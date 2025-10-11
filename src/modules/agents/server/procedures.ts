@@ -1,7 +1,7 @@
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import {db} from "@/db";
 import{agent} from "@/db/schema";
-import {agentsInsertSchema} from "../schemas";
+import {agentsInsertSchema, agentsUpdateSchema} from "../schemas";
 import {z} from "zod";
 import { eq, and, like, desc, count } from "drizzle-orm";
 import { sql } from "drizzle-orm";
@@ -86,5 +86,29 @@ export const agentsRouter = createTRPCRouter({
             console.error("Database error creating agent:", error);
             throw new Error(`Failed to create agent: ${error instanceof Error ? error.message : "Database error"}`);
         }
+    }),
+    remove: protectedProcedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input, ctx}) => {
+        const [removedAgent] = await db.delete(agent).where(
+            and(eq(agent.id, input.id), eq(agent.userId, ctx.auth.user.id))
+        ).returning();
+        
+        if (!removedAgent) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
+        }
+        
+        return removedAgent;
+    }),
+    update: protectedProcedure.input(agentsUpdateSchema).mutation(async ({input, ctx}) => {
+        const [updatedAgent] = await db.update(agent).set(input).where(
+            and(eq(agent.id, input.id), eq(agent.userId, ctx.auth.user.id))
+        ).returning();
+        
+        if (!updatedAgent) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
+        }
+        
+        return updatedAgent;
     }),
 });
