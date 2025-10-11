@@ -1,12 +1,44 @@
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import {db} from "@/db";
 import {meeting} from "@/db/schema";
+import {meetingsInsertSchema, meetingsUpdateSchema} from "../schemas";
 import {z} from "zod";
 import { eq, and, like, desc, count } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
+import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
 
 export const meetingsRouter = createTRPCRouter({
+    update: protectedProcedure.input(meetingsUpdateSchema).mutation(async ({input, ctx}) => {
+        const [updatedMeeting] = await db.update(meeting).set(input).where(
+            and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id))
+        ).returning();
+        
+        if (!updatedMeeting) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Meeting not found" });
+        }
+        
+        return updatedMeeting;
+    }),
+    create: protectedProcedure.input(meetingsInsertSchema).mutation(async ({input, ctx}) => {
+        try {
+            console.log("Creating meeting with input:", input);
+            console.log("User ID:", ctx.auth.user.id);
+            
+            const [createdMeeting] = await db.insert(meeting).values({
+                id: nanoid(),
+                ...input,
+                userId: ctx.auth.user.id,
+            }).returning();
+            
+            console.log("Meeting created successfully:", createdMeeting);
+            return createdMeeting;
+            // TODO: call upsert stream users for video call SDK
+        } catch (error) {
+            console.error("Database error creating meeting:", error);
+            throw new Error(`Failed to create meeting: ${error instanceof Error ? error.message : "Database error"}`);
+        }
+    }),
     getOne: protectedProcedure.input(z.object({
         id: z.string(),
     })).query(async ({input, ctx}) => {
