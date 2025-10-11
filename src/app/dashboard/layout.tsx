@@ -113,7 +113,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <nav className={`flex-1 ${isSidebarCollapsed ? 'p-2' : 'p-6'}`}>
           <ul className="space-y-4">
             <li>
-              <a href="/dashboard" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-colors`}>
+              <a href="/dashboard/meetings" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-colors`}>
                 <Video className="w-5 h-5" />
                 {!isSidebarCollapsed && <span>Meetings</span>}
               </a>
