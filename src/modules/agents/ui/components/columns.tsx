@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { CornerDownRight } from "lucide-react"
-import type { AgentGetOne } from "../../types"
+import type { AgentGetMany } from "../../types"
 
 const getAgentEmoji = (name: string) => {
   if (!name) return "🤖";
@@ -14,7 +14,7 @@ const getAgentEmoji = (name: string) => {
   return emojis[index];
 };
 
-export const columns: ColumnDef<AgentGetOne>[] = [
+export const columns: ColumnDef<AgentGetMany["items"][number]>[] = [
   {
     accessorKey: "name",
     header: "Agent Name",
