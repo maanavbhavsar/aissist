@@ -1,9 +1,9 @@
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import {db} from "@/db";
-import {meeting} from "@/db/schema";
+import {meeting, agent} from "@/db/schema";
 import {meetingsInsertSchema, meetingsUpdateSchema} from "../schemas";
 import {z} from "zod";
-import { eq, and, like, desc, count } from "drizzle-orm";
+import { eq, and, like, desc, count, sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
 import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
@@ -89,8 +89,14 @@ export const meetingsRouter = createTRPCRouter({
             summary: meeting.summary,
             createdAt: meeting.createdAt,
             updatedAt: meeting.updatedAt,
+            agent: {
+                id: agent.id,
+                name: agent.name,
+            },
+            duration: sql<number>`extract(epoch from (${meeting.endedAt} - ${meeting.startedAt}))`.as('duration'),
         })
         .from(meeting)
+        .innerJoin(agent, eq(meeting.agentId, agent.id))
         .where(and(...whereConditions))
         .orderBy(desc(meeting.createdAt), desc(meeting.id))
         .limit(pageSize)
@@ -98,6 +104,7 @@ export const meetingsRouter = createTRPCRouter({
         
         const [totalResult] = await db.select({ count: count() })
         .from(meeting)
+        .innerJoin(agent, eq(meeting.agentId, agent.id))
         .where(and(...whereConditions));
         
         const totalPages = Math.ceil(totalResult.count / pageSize);
