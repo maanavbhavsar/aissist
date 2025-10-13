@@ -10,4 +10,5 @@ export enum MeetingStatus {
 }
 
 export type MeetingGetOne = inferRouterOutputs<AppRouter>["meetings"]["getOne"];
+export type MeetingGetOneOutput = MeetingGetOne;
 export type MeetingGetMany = inferRouterOutputs<AppRouter>["meetings"]["getMany"];
