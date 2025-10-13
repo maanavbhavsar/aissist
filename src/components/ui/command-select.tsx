@@ -32,6 +32,14 @@ export const CommandSelect = ({
 
     const selectedOption = options.find((option) => option.value === value);
 
+    const handleOpenChange = (open: boolean) => {
+        if (onSearch) {
+            onSearch("");
+        }
+        setSearchValue("");
+        setOpen(open);
+    };
+
     return (
         <>
             <Button
@@ -49,7 +57,7 @@ export const CommandSelect = ({
                 </div>
                 <ChevronsUpDownIcon />
             </Button>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogContent className="max-w-md">
                     <DialogTitle className="sr-only">Select Option</DialogTitle>
                     <div className="space-y-4">

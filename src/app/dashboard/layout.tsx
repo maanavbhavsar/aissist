@@ -26,19 +26,37 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Client-side hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // Mobile detection
   useEffect(() => {
+    if (!isClient) return;
+    
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const isMobileSize = window.innerWidth < 768;
+      setIsMobile(isMobileSize);
+      
+      // On mobile, always start with sidebar closed
+      if (isMobileSize) {
+        setIsSidebarCollapsed(true);
+      }
+      // On desktop, expand sidebar when switching from mobile
+      else if (!isMobileSize) {
+        setIsSidebarCollapsed(false);
+      }
     };
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
     
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [isClient]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -92,9 +110,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative">
+      {/* Mobile backdrop */}
+      {isMobile && !isSidebarCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/30 z-40 transition-opacity duration-300"
+          onClick={() => setIsSidebarCollapsed(true)}
+        />
+      )}
+      
       {/* Sidebar */}
-      <div className={`${isSidebarCollapsed ? 'w-16' : 'w-64'} bg-slate-900 text-white flex flex-col transition-all duration-300 min-h-screen`}>
+      <div className={`${isMobile ? 'w-64' : (isSidebarCollapsed ? 'w-16' : 'w-64')} ${isMobile ? 'fixed left-0 top-0 z-50 h-screen' : 'relative'} bg-slate-900 text-white flex flex-col transition-all duration-300 min-h-screen ${isMobile && isSidebarCollapsed ? '-translate-x-full' : ''}`}>
         {/* Logo Section */}
         <div className={`${isSidebarCollapsed ? 'p-4' : 'p-6'} border-b border-slate-800`}>
           <div className="flex items-center justify-center">
@@ -201,10 +227,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
         
         {/* Page Content */}
-        <div className="flex-1 bg-transparent">
-          <div className="p-6">
-            <div className="mb-6">
-              <h1 className="text-2xl font-semibold text-white">
+        <div className="flex-1 bg-transparent min-w-0">
+          <div className={`${isMobile ? 'p-2' : 'p-6'}`}>
+            <div className={`${isMobile ? 'mb-2' : 'mb-6'}`}>
+              <h1 className={`${isMobile ? 'text-base' : 'text-2xl'} font-semibold text-white`}>
                 Welcome back, {session.user.name}
               </h1>
             </div>
