@@ -2,11 +2,9 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
-import { 
-  MeetingIdView,
-  MeetingIdViewLoading,
-  MeetingIdViewError 
-} from "@/modules/meetings/ui/views/meeting-id-view";
+import { MeetingIdView } from "@/modules/meetings/ui/views/meeting-id-view";
+import { MeetingIdViewLoading } from "@/modules/meetings/ui/views/meeting-id-view";
+import { MeetingIdViewError } from "@/modules/meetings/ui/views/meeting-id-view";
 
 interface Props {
   params: Promise<{
@@ -19,19 +17,21 @@ export default async function Page({ params }: Props) {
 
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery(
+  void queryClient.prefetchQuery(
     trpc.meetings.getOne.queryOptions({
       id: meetingId,
     })
   );
 
+  // TODO: meetings.getTranscript (to be implemented later)
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ErrorBoundary fallback={<MeetingIdViewError />}>
-        <Suspense fallback={<MeetingIdViewLoading />}>
+      <Suspense fallback={<MeetingIdViewLoading />}>
+        <ErrorBoundary fallback={<MeetingIdViewError />}>
           <MeetingIdView meetingId={meetingId} />
-        </Suspense>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </Suspense>
     </HydrationBoundary>
   );
 }

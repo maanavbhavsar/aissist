@@ -21,6 +21,19 @@ export const meetingsRouter = createTRPCRouter({
         
         return updatedMeeting;
     }),
+    remove: protectedProcedure.input(z.object({
+        id: z.string(),
+    })).mutation(async ({input, ctx}) => {
+        const [removedMeeting] = await db.delete(meeting).where(
+            and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id))
+        ).returning();
+        
+        if (!removedMeeting) {
+            throw new TRPCError({ code: "NOT_FOUND", message: "Meeting not found" });
+        }
+        
+        return removedMeeting;
+    }),
     create: protectedProcedure.input(meetingsInsertSchema).mutation(async ({input, ctx}) => {
         try {
             console.log("Creating meeting with input:", input);
@@ -56,7 +69,13 @@ export const meetingsRouter = createTRPCRouter({
             summary: meeting.summary,
             createdAt: meeting.createdAt,
             updatedAt: meeting.updatedAt,
-        }).from(meeting).where(and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id)));
+            agent: {
+                id: agent.id,
+                name: agent.name,
+            },
+        }).from(meeting)
+        .innerJoin(agent, eq(meeting.agentId, agent.id))
+        .where(and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id)));
         if (!existingMeeting) {
             throw new TRPCError({ code: "NOT_FOUND", message: "Meeting not found" });
         }

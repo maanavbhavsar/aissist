@@ -16,15 +16,15 @@ import {
 import { Button } from "@/components/ui/button";
 
 interface Props {
-  agentId: string;
-  agentName: string;
+  meetingId: string;
+  meetingName: string;
   onEdit: () => void;
   onRemove: () => void;
 }
 
-export function AgentIdViewHeader({
-  agentId,
-  agentName,
+export function MeetingIdViewHeader({
+  meetingId,
+  meetingName,
   onEdit,
   onRemove,
 }: Props) {
@@ -34,8 +34,8 @@ export function AgentIdViewHeader({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/agents" className="font-medium text-xl">
-                My Agents
+              <Link href="/dashboard/meetings" className="font-medium text-xl">
+                My Meetings
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -44,8 +44,8 @@ export function AgentIdViewHeader({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/dashboard/agents/${agentId}`} className="text-foreground">
-                {agentName}
+              <Link href={`/dashboard/meetings/${meetingId}`} className="text-foreground">
+                {meetingName}
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>

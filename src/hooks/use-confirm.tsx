@@ -35,6 +35,7 @@ export const useConfirm = (
       onOpenChange={handleClose}
       title={title}
       description={description}
+      showSearch={false}
     >
       <div className="flex flex-col-reverse gap-y-2 lg:flex-row lg:gap-x-2 lg:items-center lg:justify-end">
         <Button
