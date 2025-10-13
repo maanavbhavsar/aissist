@@ -7,6 +7,7 @@ import { eq, and, like, desc, count, sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
 import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
+import { MeetingStatus } from "../types";
 
 export const meetingsRouter = createTRPCRouter({
     update: protectedProcedure.input(meetingsUpdateSchema).mutation(async ({input, ctx}) => {
@@ -65,8 +66,10 @@ export const meetingsRouter = createTRPCRouter({
         page: z.number().default(DEFAULT_PAGE),
         pageSize: z.number().min(MIN_PAGE_SIZE).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
         search: z.string().optional(),
+        agentId: z.string().nullish(),
+        status: z.nativeEnum(MeetingStatus).nullish(),
     })).query(async ({ input, ctx }) => {
-        const { page, pageSize, search } = input;
+        const { page, pageSize, search, status, agentId } = input;
         
         const whereConditions = [
             eq(meeting.userId, ctx.auth.user.id)
@@ -74,6 +77,14 @@ export const meetingsRouter = createTRPCRouter({
         
         if (search) {
             whereConditions.push(like(meeting.name, `%${search}%`));
+        }
+
+        if (status) {
+            whereConditions.push(eq(meeting.status, status));
+        }
+
+        if (agentId) {
+            whereConditions.push(eq(meeting.agentId, agentId));
         }
         
         const data = await db.select({

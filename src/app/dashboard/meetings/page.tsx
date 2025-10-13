@@ -5,12 +5,18 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import type { SearchParams } from "nuqs/server";
 import { MeetingsView } from "@/modules/meetings/ui/views/meetings-view";
 import { MeetingsViewLoading } from "@/modules/meetings/ui/views/meetings-view";
 import { MeetingsViewError } from "@/modules/meetings/ui/views/meetings-view";
 import { MeetingsListHeader } from "@/modules/meetings/ui/components/meetings-list-header";
+import { loadSearchParams } from "@/modules/meetings/params";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -19,9 +25,12 @@ export default async function Page() {
   }
 
   const queryClient = getQueryClient();
+  const filters = await loadSearchParams(searchParams);
 
   void queryClient.prefetchQuery(
-    trpc.meetings.getMany.queryOptions({})
+    trpc.meetings.getMany.queryOptions({
+      ...filters,
+    })
   );
   
   void queryClient.prefetchQuery(
