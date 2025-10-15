@@ -8,8 +8,35 @@ import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@
 import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
 import { MeetingStatus } from "../types";
+import { streamVideo } from "@/lib/stream-video";
+import { generateAvatarURI } from "@/lib/avatar";
 
 export const meetingsRouter = createTRPCRouter({
+    generateToken: protectedProcedure.mutation(async ({ ctx }) => {
+        // Upsert the logged-in user in Stream
+        await streamVideo.upsertUsers([
+            {
+                id: ctx.auth.user.id,
+                name: ctx.auth.user.name,
+                role: 'admin',
+                image: ctx.auth.user.image ?? generateAvatarURI({
+                    seed: ctx.auth.user.name,
+                    variant: 'initials',
+                }),
+            },
+        ]);
+
+        // Generate Stream token
+        const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour expiry
+        const iat = Math.floor(Date.now() / 1000);
+        const token = streamVideo.generateUserToken({
+            user_id: ctx.auth.user.id,
+            exp,
+            iat,
+        });
+
+        return token;
+    }),
     update: protectedProcedure.input(meetingsUpdateSchema).mutation(async ({input, ctx}) => {
         const [updatedMeeting] = await db.update(meeting).set(input).where(
             and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id))
@@ -46,8 +73,41 @@ export const meetingsRouter = createTRPCRouter({
             }).returning();
             
             console.log("Meeting created successfully:", createdMeeting);
+
+            // Create Stream call
+            const call = streamVideo.video.call('default', createdMeeting.id);
+            await call.create({
+                data: {
+                    created_by_id: ctx.auth.user.id,
+                    custom: {
+                        meeting_id: createdMeeting.id,
+                        meeting_name: createdMeeting.name,
+                    },
+                    settings_override: {
+                        transcription: { mode: 'auto-on', closed_caption_mode: 'auto-on', language: 'en' },
+                        recording: { mode: 'auto-on', quality: '1080p' },
+                    },
+                },
+            });
+
+            // Fetch the agent from database
+            const [meetingAgent] = await db.select().from(agent).where(eq(agent.id, createdMeeting.agentId)).limit(1);
+            if (!meetingAgent) throw new Error('Agent not found');
+
+            // Upsert the agent user in Stream
+            await streamVideo.upsertUsers([
+                {
+                    id: meetingAgent.id,
+                    name: meetingAgent.name,
+                    role: 'user',
+                    image: generateAvatarURI({
+                        seed: meetingAgent.name,
+                        variant: 'botttsNeutral',
+                    }),
+                },
+            ]);
+
             return createdMeeting;
-            // TODO: call upsert stream users for video call SDK
         } catch (error) {
             console.error("Database error creating meeting:", error);
             throw new Error(`Failed to create meeting: ${error instanceof Error ? error.message : "Database error"}`);
