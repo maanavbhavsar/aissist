@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "ngrok:webhook": "ngrok http --url=enjoyingly-indissoluble-kasandra.ngrok-free.dev 3000"
   },
   "dependencies": {
     "@dicebear/collection": "^9.2.4",
