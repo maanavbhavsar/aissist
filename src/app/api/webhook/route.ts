@@ -1,11 +1,12 @@
 import { and, eq, not} from "drizzle-orm";
+import { inngest } from "@/inngest/client";
 import { NextRequest, NextResponse } from "next/server";
 import {
-    //CallEndedEvent,
+    CallEndedEvent,
     CallSessionParticipantLeftEvent,
     CallSessionStartedEvent,
-    //CallRecordingReadyEvent,
-    //CallTranscriptionReadyEvent,
+    CallRecordingReadyEvent,
+    CallTranscriptionReadyEvent,
 } from "@stream-io/node-sdk";
 
 import { db } from "@/db";
@@ -74,6 +75,66 @@ export async function POST(request: NextRequest) {
         (await realtimeClient).updateSession({
             instructions: agentData.instructions,
         })
+    }
+
+    else if (eventType === "call.session_ended") {
+        const event = payload as CallEndedEvent;
+        const meetingID = event.call.custom?.meetingID;
+
+        if (!meetingID) {
+            return NextResponse.json({ error: "Meeting ID is required" }, { status: 400 });
+        }
+
+        const [updatedMeeting] = await db.update(meeting).set({
+            status: "processing",
+            endedAt: new Date(),
+        }).where(and(eq(meeting.id, meetingID), eq(meeting.status, "active"))).returning();
+
+        if (!updatedMeeting) {
+            return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
+        }
+    }
+
+    else if (eventType === "call.transcription_ready") {
+        const event = payload as CallTranscriptionReadyEvent;
+        const meetingID = event.call_cid.split(":")[1];
+
+        if (!meetingID) {
+            return NextResponse.json({ error: "Meeting ID is required" }, { status: 400 });
+        }
+
+        const [updatedMeeting] = await db.update(meeting).set({
+            transcriptUrl: event.call_transcription.url,
+        }).where(eq(meeting.id, meetingID)).returning();
+
+        if (!updatedMeeting) {
+            return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
+        }
+
+        await inngest.send({
+            name: "meetings/processing",
+            data: {
+                meetingId: updatedMeeting.id,
+                transcriptUrl: updatedMeeting.transcriptUrl,
+            },
+        });
+    }
+
+    else if (eventType === "call.recording_ready") {
+        const event = payload as CallRecordingReadyEvent;
+        const meetingID = event.call_cid.split(":")[1];
+
+        if (!meetingID) {
+            return NextResponse.json({ error: "Meeting ID is required" }, { status: 400 });
+        }
+
+        const [updatedMeeting] = await db.update(meeting).set({
+            recordingUrl: event.call_recording.url,
+        }).where(eq(meeting.id, meetingID)).returning();
+
+        if (!updatedMeeting) {
+            return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
+        }
     }
 
     else if (eventType === "call.session_participant_left") {

@@ -12,3 +12,11 @@ export enum MeetingStatus {
 export type MeetingGetOne = inferRouterOutputs<AppRouter>["meetings"]["getOne"];
 export type MeetingGetOneOutput = MeetingGetOne;
 export type MeetingGetMany = inferRouterOutputs<AppRouter>["meetings"]["getMany"];
+
+export type StreamTranscriptItem = {
+  speaker_id: string;
+  type: string;
+  text: string;
+  start_ts: number;
+  stop_ts: number;
+};
