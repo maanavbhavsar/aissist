@@ -4,20 +4,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { CornerDownRight, CircleCheck, CircleX, CircleArrowUp, Clock, Loader } from "lucide-react"
 import { format } from "date-fns"
-// import * as humanizeDuration from "humanize-duration"
-import { cn } from "@/lib/utils"
+import { cn, formatDuration } from "@/lib/utils"
 import { GeneratedAvatar } from "@/components/generated-avatar"
 import type { MeetingGetMany } from "../../types"
-
-const formatDuration = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  
-  if (hours > 0) {
-    return `${hours}h ${minutes}m`;
-  }
-  return `${minutes}m`;
-};
 
 const statusIconMap = {
   upcoming: CircleArrowUp,
@@ -42,10 +31,10 @@ export const columns: ColumnDef<MeetingGetMany["items"][number]>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-y-1">
-          <span className="font-semibold capitalize text-white">{row.original.name}</span>
+          <span className="font-semibold capitalize text-foreground">{row.original.name}</span>
           <div className="flex items-center gap-x-1">
-            <CornerDownRight className="size-3 text-slate-400" />
-            <span className="text-sm text-slate-400">{row.original.agent.name}</span>
+            <CornerDownRight className="size-3 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">{row.original.agent.name}</span>
           </div>
           <GeneratedAvatar
             variant="bot-neutral"
@@ -90,7 +79,7 @@ export const columns: ColumnDef<MeetingGetMany["items"][number]>[] = [
           variant="outline"
           className="capitalize"
         >
-          <Clock className="size-4 text-blue-700 flex items-center gap-x-2" />
+          <Clock className="size-4 text-primary flex items-center gap-x-2" />
           {row.original.duration ? formatDuration(row.original.duration) : "No duration"}
         </Badge>
       );

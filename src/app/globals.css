@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import '@stream-io/video-react-sdk/dist/css/styles.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -76,6 +77,10 @@
   --sidebar-ring: oklch(0.708 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+  
+  /* Stream Video SDK color overrides */
+  --str-video__primary-color: oklch(0.205 0 0);
+  --str-video__text-color: oklch(0.145 0 0);
 }
 
 .dark {
@@ -110,6 +115,10 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  
+  /* Stream Video SDK color overrides for dark mode */
+  --str-video__primary-color: oklch(0.922 0 0);
+  --str-video__text-color: oklch(0.985 0 0);
 }
 
 @layer base {
