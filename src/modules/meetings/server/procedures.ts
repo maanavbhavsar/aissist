@@ -1,15 +1,17 @@
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import {db} from "@/db";
-import {meeting, agent} from "@/db/schema";
+import {meeting, agent, user} from "@/db/schema";
 import {meetingsInsertSchema, meetingsUpdateSchema} from "../schemas";
 import {z} from "zod";
 import { eq, and, like, desc, count, sql } from "drizzle-orm";
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE, UNRESTRICTED_EMAILS } from "@/constants";
 import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
 import { MeetingStatus } from "../types";
 import { streamVideo } from "@/lib/stream-video";
 import { generateAvatarURI } from "@/lib/avatar";
+import { streamChatClient } from "@/lib/stream-chat";
+import JSONL from 'jsonl-parse-stringify';
 
 export const meetingsRouter = createTRPCRouter({
     generateToken: protectedProcedure.mutation(async ({ ctx }) => {
@@ -65,6 +67,21 @@ export const meetingsRouter = createTRPCRouter({
         try {
             console.log("Creating meeting with input:", input);
             console.log("User ID:", ctx.auth.user.id);
+            
+            // Check meeting limit for non-unrestricted users
+            const [userData] = await db.select().from(user).where(eq(user.id, ctx.auth.user.id));
+            if (!userData?.email || !UNRESTRICTED_EMAILS.includes(userData.email)) {
+                const [meetingCount] = await db.select({ count: count() })
+                    .from(meeting)
+                    .where(eq(meeting.userId, ctx.auth.user.id));
+                
+                if (meetingCount.count >= 3) {
+                    throw new TRPCError({ 
+                        code: "FORBIDDEN", 
+                        message: "You have reached the maximum limit of 3 meetings." 
+                    });
+                }
+            }
             
             const [createdMeeting] = await db.insert(meeting).values({
                 id: nanoid(),
@@ -205,4 +222,80 @@ export const meetingsRouter = createTRPCRouter({
             totalPages,
         };
     }),
+    getTranscript: protectedProcedure
+        .input(z.object({ id: z.string() }))
+        .query(async ({ ctx, input }) => {
+            // 1) fetch meeting and check access
+            const [existingMeeting] = await db.select()
+                .from(meeting)
+                .where(and(eq(meeting.id, input.id), eq(meeting.userId, ctx.auth.user.id)));
+
+            if (!existingMeeting) throw new TRPCError({ code: 'NOT_FOUND', message: 'Meeting not found' })
+            if (!existingMeeting.transcriptUrl) return []
+
+            // 2) fetch transcript file (JSONL)
+            let transcriptItems: any[] = []
+            try {
+                const res = await fetch(existingMeeting.transcriptUrl)
+                if (!res.ok) return []
+                const text = await res.text()
+                transcriptItems = JSONL.parse(text)
+            } catch (err) {
+                return []
+            }
+
+            // 3) collect unique speaker IDs
+            const speakerIds = Array.from(new Set(transcriptItems.map((it) => it.speaker_id).filter(Boolean)))
+
+            // 4) load user speakers
+            const userSpeakers = speakerIds.length > 0 ? await db.select()
+                .from(user)
+                .where(sql`${user.id} = ANY(${speakerIds})`) : []
+
+            // 5) load agent speakers (agents table)
+            const agentSpeakers = speakerIds.length > 0 ? await db.select()
+                .from(agent)
+                .where(sql`${agent.id} = ANY(${speakerIds})`) : []
+
+            // 6) normalize speakers into map
+            const speakersMap = new Map<string, { id: string; name: string; image: string | null }>()
+            userSpeakers.forEach((u) => {
+                speakersMap.set(u.id, { id: u.id, name: u.name ?? 'Unknown', image: u.image ?? null })
+            })
+            agentSpeakers.forEach((a) => {
+                speakersMap.set(a.id, { id: a.id, name: a.name ?? 'Agent', image: null })
+            })
+
+            // 7) map transcript items to include speaker info
+            const transcriptWithSpeakers = transcriptItems.map((item) => {
+                const sid = item.speaker_id
+                if (!sid || !speakersMap.has(sid)) {
+                    return {
+                        ...item,
+                        speaker: { id: 'unknown', name: 'Unknown', image: generateAvatarURI({ seed: 'unknown', variant: 'initials' }) },
+                    }
+                }
+                const sp = speakersMap.get(sid)!
+                return { ...item, speaker: { id: sp.id, name: sp.name, image: sp.image ?? generateAvatarURI({ seed: sp.name, variant: 'initials' }) } }
+            })
+
+            return transcriptWithSpeakers
+        }),
+    generateChatToken: protectedProcedure
+        .mutation(async ({ ctx }) => {
+            const userId = ctx.auth.user.id
+            const userName = ctx.auth.user.name ?? 'User'
+            const image = ctx.auth.user.image ?? generateAvatarURI({ seed: userName, variant: 'initials' })
+
+            // upsert user if needed — stream chat has server methods for user creation
+            await streamChatClient.upsertUser({
+                id: userId,
+                name: userName,
+                image,
+                role: 'admin',
+            })
+
+            const token = streamChatClient.createToken(userId)
+            return token
+        }),
 });

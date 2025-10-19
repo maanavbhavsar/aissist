@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { ArrowLeft } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import Transcript from '@/modules/meetings/ui/components/transcript'
+import ChatProvider from '@/modules/meetings/ui/components/chat-provider'
 
 interface CompletedStateProps {
   meetingId: string
@@ -40,66 +43,59 @@ export default function CompletedState({
 
       <div className="border-t border-border" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-        {/* Summary Tab */}
-        <Card className="col-span-full">
-          <CardHeader>
-            <h3 className="text-lg font-semibold text-foreground">Meeting Summary</h3>
-          </CardHeader>
-          <CardContent className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground">
-            {summary ? (
-              <ReactMarkdown>{summary}</ReactMarkdown>
-            ) : (
-              <p className="text-muted-foreground">No summary available.</p>
-            )}
-          </CardContent>
-        </Card>
+      <Tabs defaultValue="summary" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="summary">Summary</TabsTrigger>
+          <TabsTrigger value="transcript">Transcript</TabsTrigger>
+          <TabsTrigger value="recording">Recording</TabsTrigger>
+          <TabsTrigger value="chat">Chat</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="summary">
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-foreground">Meeting Summary</h3>
+            </CardHeader>
+            <CardContent className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground">
+              {summary ? (
+                <ReactMarkdown>{summary}</ReactMarkdown>
+              ) : (
+                <p className="text-muted-foreground">No summary available.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Transcript Tab */}
-        <Card className="col-span-full">
-          <CardHeader>
-            <h3 className="text-lg font-semibold text-foreground">Meeting Transcript</h3>
-          </CardHeader>
-          <CardContent className="prose dark:prose-invert max-w-none prose-headings:text-foreground prose-p:text-muted-foreground prose-strong:text-foreground">
-            {transcript ? (
-              <ReactMarkdown>{transcript}</ReactMarkdown>
-            ) : (
-              <p className="text-muted-foreground">No transcript available.</p>
-            )}
-          </CardContent>
-        </Card>
+        <TabsContent value="transcript">
+          <Transcript meetingId={meetingId} />
+        </TabsContent>
 
-        {/* Recording Tab */}
-        <Card className="col-span-full">
-          <CardHeader>
-            <h3 className="text-lg font-semibold text-foreground">Recording</h3>
-          </CardHeader>
-          <CardContent>
-            {recordingUrl ? (
-              <video 
-                controls 
-                className="w-full rounded-lg shadow-lg border border-border"
-                preload="metadata"
-              >
-                <source src={recordingUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            ) : (
-              <p className="text-muted-foreground">No recording available.</p>
-            )}
-          </CardContent>
-        </Card>
+        <TabsContent value="recording">
+          <Card>
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-foreground">Recording</h3>
+            </CardHeader>
+            <CardContent>
+              {recordingUrl ? (
+                <video 
+                  controls 
+                  className="w-full rounded-lg shadow-lg border border-border"
+                  preload="metadata"
+                >
+                  <source src={recordingUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <p className="text-muted-foreground">No recording available.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-        {/* Chat Tab */}
-        <Card className="col-span-full">
-          <CardHeader>
-            <h3 className="text-lg font-semibold text-foreground">Chat</h3>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Chat history feature coming soon.</p>
-          </CardContent>
-        </Card>
-      </div>
+        <TabsContent value="chat">
+          <ChatProvider meetingId={meetingId} meetingName={meetingName || 'Meeting'} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
