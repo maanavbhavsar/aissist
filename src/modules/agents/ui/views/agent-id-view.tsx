@@ -11,7 +11,8 @@ import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import { Badge } from "@/components/ui/badge";
-import { Video } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Video, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 
@@ -59,6 +60,15 @@ export function AgentIdView({ agentId }: Props) {
   return (
     <>
       <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
+        <div className="flex items-center justify-between">
+          <Button
+            onClick={() => router.push('/dashboard/agents')}
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/60 transition-all duration-300"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Agents
+          </Button>
+        </div>
         <AgentIdViewHeader
           agentId={agentId}
           agentName={data.name}
@@ -66,7 +76,7 @@ export function AgentIdView({ agentId }: Props) {
           onRemove={handleRemoveAgent}
         />
       
-      <div className="bg-slate-800/50 rounded-lg border border-slate-700/50 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 rounded-lg border border-cyan-500/20 backdrop-blur-sm shadow-2xl shadow-cyan-500/10">
         <div className="px-4 py-5 gap-y-5 flex flex-col col-span-5">
           <div className="flex items-center gap-x-3">
             <GeneratedAvatar
@@ -77,9 +87,9 @@ export function AgentIdView({ agentId }: Props) {
             <h2 className="text-2xl font-medium text-white">{data.name}</h2>
           </div>
           
-          <Badge variant="outline" className="flex items-center gap-x-2 [&>svg]:size-4 border-slate-600 text-slate-300 bg-slate-700/30">
-            <Video className="size-4 text-blue-400" />
-            {data.meetingCount}{data.meetingCount === 1 ? "meeting" : "meetings"}
+          <Badge variant="outline" className="flex items-center gap-x-2 [&>svg]:size-4 border-cyan-500/30 text-slate-300 bg-cyan-600/20">
+            <Video className="size-4 text-cyan-400" />
+            {data.meetingCount} {data.meetingCount === 1 ? "meeting" : "meetings"}
           </Badge>
           
           <div className="flex flex-col gap-y-4">

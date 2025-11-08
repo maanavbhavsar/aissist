@@ -31,19 +31,21 @@ export const columns: ColumnDef<MeetingGetMany["items"][number]>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex flex-col gap-y-1">
-          <span className="font-semibold capitalize text-foreground">{row.original.name}</span>
+          <span className="font-semibold capitalize text-white truncate">{row.original.name}</span>
           <div className="flex items-center gap-x-1">
-            <CornerDownRight className="size-3 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{row.original.agent.name}</span>
+            <CornerDownRight className="size-3 text-slate-400 flex-shrink-0" />
+            <span className="text-sm text-slate-300 truncate">{row.original.agent.name}</span>
           </div>
-          <GeneratedAvatar
-            variant="bot-neutral"
-            seed={row.original.agent.name}
-            className="size-4"
-          />
-          <span className="text-sm text-muted-foreground">
-            {row.original.startedAt ? format(new Date(row.original.startedAt), "MMM d") : ""}
-          </span>
+          <div className="flex items-center gap-x-2">
+            <GeneratedAvatar
+              variant="bot-neutral"
+              seed={row.original.agent.name}
+              className="size-4 flex-shrink-0"
+            />
+            <span className="text-sm text-slate-400">
+              {row.original.startedAt ? format(new Date(row.original.startedAt), "MMM d") : ""}
+            </span>
+          </div>
         </div>
       );
     },
@@ -61,7 +63,7 @@ export const columns: ColumnDef<MeetingGetMany["items"][number]>[] = [
         >
           <Icon
             className={cn(
-              "size-4 text-muted-foreground",
+              "size-4 text-slate-400",
               row.original.status === "processing" && "animate-spin"
             )}
           />

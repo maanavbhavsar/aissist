@@ -7,8 +7,8 @@ import { AgentsListHeader } from "@/modules/agents/ui/components/agents-list-hea
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { loadSearchParams, type SearchParams } from "@/modules/agents/params";
-import type { Promise } from "nuqs";
+import { loadSearchParams } from "@/modules/agents/params";
+import type { SearchParams } from "nuqs/server";
 
 interface PageProps {
   searchParams: Promise<SearchParams>;

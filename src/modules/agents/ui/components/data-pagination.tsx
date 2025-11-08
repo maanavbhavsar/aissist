@@ -11,7 +11,7 @@ interface DataPaginationProps {
 export const DataPagination = ({ page, totalPages, onPageChange }: DataPaginationProps) => {
   return (
     <div className="flex items-center justify-between">
-      <div className="flex-1 text-sm text-muted-foreground">
+      <div className="flex-1 text-sm text-slate-300">
         Page {page} of {totalPages === 0 ? 1 : totalPages}
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">

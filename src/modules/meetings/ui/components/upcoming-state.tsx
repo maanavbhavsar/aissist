@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Video, Ban } from "lucide-react";
+import { Video } from "lucide-react";
 
 interface Props {
   meetingId: string;
@@ -14,16 +14,8 @@ export function UpcomingState({ meetingId }: Props) {
         <p className="text-slate-300">Your meeting is scheduled and ready to begin.</p>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 bg-transparent border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-        >
-          <Ban className="size-4" />
-          Cancel Meeting
-        </Button>
-        
-        <Button asChild className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700">
+      <div className="flex justify-center">
+        <Button asChild className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/60 transition-all duration-300">
           <Link href={`/call/${meetingId}`}>
             <Video className="size-4" />
             Start Meeting

@@ -41,7 +41,6 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
         onError: (error) => {
             console.error("Agent creation error:", error);
             toast.error(`Failed to create agent: ${error.message || "Unknown error"}`);
-            // TODO: Handle error, redirect to "/upgrade"
         },
     }));
 
@@ -55,7 +54,6 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
         onError: (error) => {
             console.error("Agent update error:", error);
             toast.error(`Failed to update agent: ${error.message || "Unknown error"}`);
-            // TODO: Handle error, redirect to "/upgrade"
         },
     }));
     
@@ -142,7 +140,7 @@ export const AgentForm = ({ onSuccess, onCancel, initialValues }: AgentFormProps
                     )}
                 />
                 <div className="flex justify-between gap-2">
-                    <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white">{isEdit ? "Update" : "Create"} Agent</Button>
+                    <Button type="submit" disabled={isPending} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/60 transition-all duration-300">{isEdit ? "Update" : "Create"} Agent</Button>
                     <Button type="button" variant="outline" onClick={onCancel} className="border-blue-200 text-blue-700 hover:bg-blue-50">Cancel</Button>
                 </div>
             </form>

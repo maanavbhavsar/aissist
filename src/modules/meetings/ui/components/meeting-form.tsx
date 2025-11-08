@@ -46,7 +46,6 @@ const MeetingForm = ({ onSuccess, onCancel, initialValues }: MeetingFormProps) =
         onError: (error) => {
             console.error("Meeting creation error:", error);
             toast.error(`Failed to create meeting: ${error.message || "Unknown error"}`);
-            // TODO: Handle error, redirect to "/upgrade"
         },
     }));
 
@@ -60,7 +59,6 @@ const MeetingForm = ({ onSuccess, onCancel, initialValues }: MeetingFormProps) =
         onError: (error) => {
             console.error("Meeting update error:", error);
             toast.error(`Failed to update meeting: ${error.message || "Unknown error"}`);
-            // TODO: Handle error, redirect to "/upgrade"
         },
     }));
     
@@ -156,7 +154,7 @@ const MeetingForm = ({ onSuccess, onCancel, initialValues }: MeetingFormProps) =
                                 />
                             </FormControl>
                             <FormDescription className="mt-2">
-                                Did not find the agent you're looking for?{" "}
+                                Did not find the agent you&apos;re looking for?{" "}
                                 <button
                                     type="button"
                                     className="text-primary hover:underline font-medium"
@@ -173,7 +171,7 @@ const MeetingForm = ({ onSuccess, onCancel, initialValues }: MeetingFormProps) =
                     <Button type="button" variant="outline" onClick={onCancel} className="px-6">
                         Cancel
                     </Button>
-                    <Button type="submit" disabled={isPending} className="bg-blue-600 hover:bg-blue-700 text-white px-6">
+                    <Button type="submit" disabled={isPending} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white px-6 shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/60 transition-all duration-300">
                         {isEdit ? "Update" : "Create"} Meeting
                     </Button>
                 </div>

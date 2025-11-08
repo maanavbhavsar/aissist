@@ -1,24 +1,31 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { authClient } from '@/lib/auth-client'
-import LoadingState from '@/components/loading-state'
-import ChatUI from '@/modules/meetings/ui/components/chat-ui'
+import { LoadingState } from "@/components/loading-state";
+import { authClient } from "@/lib/auth-client";
+import { ChatUI } from "./chat-ui";
 
-export default function ChatProvider({ meetingId, meetingName }: { meetingId: string; meetingName: string }) {
-  const { data, isPending } = authClient.useSession()
-
-  if (!data || isPending) {
-    return <LoadingState title="Loading chat..." />
-  }
-
-  return (
-    <ChatUI
-      meetingId={meetingId}
-      meetingName={meetingName}
-      userId={data.user.id}
-      username={data.user.name}
-      userImage={data.user.image ?? undefined}
-    />
-  )
+interface Props {
+    meetingId: string;
+    meetingName: string;
 }
+
+export const ChatProvider = ({ meetingId, meetingName }: Props) => {
+
+    const { data, isPending } = authClient.useSession();
+
+    if (isPending || !data?.user) {
+        return (
+            <LoadingState title="Loading chat.." description="Please wait while we load the chat" />
+        );
+    }
+
+    return (
+        <ChatUI 
+            meetingId={meetingId}
+            meetingName={meetingName}
+            userId={data.user.id}
+            userName={data.user.name}
+            userImage={data.user.image ?? ""}
+        />
+    );
+};

@@ -2,7 +2,6 @@ import { db } from "@/db";
 import { agent, meeting as meetingSchema, user } from "@/db/schema";
 import { inngest } from "@/inngest/client";
 import { and, eq, inArray} from "drizzle-orm";
-// @ts-ignore
 import JSONL from "jsonl-parse-stringify"
 import {createAgent, openai, TextMessage} from "@inngest/agent-kit"
 import { StreamTranscriptItem } from "@/modules/meetings/types";
@@ -35,10 +34,10 @@ model : openai({model: "gpt-4o", apiKey: process.env.OPENAI_API_KEY })
  
 export const meetingsProcessing = inngest.createFunction(
   {
-    id: "meetings/processing"
+    id: "meeting/processing"
   },
   {
-    event : "meetings/processing"
+    event : "meeting/processing"
   },
   async ({event,step}) =>{
 

@@ -1,65 +1,68 @@
 "use client";
 
+import { AlertTriangle } from "lucide-react";
+
 export const HomeView = () => {
   return (
-    <div className="max-w-4xl">
-      <h2 className="text-3xl font-semibold text-white mb-8">
-        Your Dashboard
-      </h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Meetings Card */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg shadow-sm border border-slate-700 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Meetings</h3>
-            <div className="w-10 h-10 bg-blue-900/50 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17 10h-2v2h2v-2zm4-8H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l2 2V4c0-1.1-.9-2-2-2zM8 15c0 .55-.45 1-1 1s-1-.45-1-1v-2H3v2c0 1.1.9 2 2 2s2-.9 2-2v-2H8v2zM9 11H3c0-1.1.9-2 2-2s2 .9 2 2z"/>
-              </svg>
-            </div>
+    <div className="flex justify-center items-start w-full px-2 sm:px-4 md:px-6 py-4">
+      <div className="max-w-4xl w-full">
+        <div className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm rounded-xl shadow-2xl shadow-cyan-500/20 border border-cyan-500/30 p-6 sm:p-8 md:p-10 space-y-6">
+          {/* Welcome Header */}
+          <div className="space-y-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight">
+              Welcome to <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">AIssist</span> — your full-stack SaaS where AI powers your productivity!
+            </h1>
           </div>
-          <p className="text-slate-300 text-sm mb-4">
-            Manage your automated meetings and transcriptions.
-          </p>
-          <button className="text-blue-400 hover:text-blue-300 font-medium text-sm">
-            View All →
-          </button>
-        </div>
 
-        {/* Agents Card */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg shadow-sm border border-slate-700 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Agents</h3>
-            <div className="w-10 h-10 bg-blue-900/50 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-              </svg>
-            </div>
+          {/* How it Works Section */}
+          <div className="space-y-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-200">Here's how it works:</h2>
+            <ul className="space-y-3 text-slate-300 text-base sm:text-lg leading-relaxed">
+              <li>
+                Create your personal <span className="text-cyan-400 font-semibold">AI Assistant</span> with your own custom instructions.
+              </li>
+              <li>
+                Assign your assistant to a meeting or task and <span className="text-cyan-400 font-semibold">collaborate live</span> — it can take notes, summarize discussions, or even act as a mock interviewer.
+              </li>
+              <li>
+                <span className="text-cyan-400 font-semibold">Chat in any language</span> — real-time translation and transcription are built in.
+              </li>
+              <li>
+                After the session, access your recordings, transcripts, summaries, and AI chat insights — all in one place.
+              </li>
+            </ul>
           </div>
-          <p className="text-slate-300 text-sm mb-4">
-            Create and manage AI assistants for your meetings.
-          </p>
-          <button className="text-blue-400 hover:text-blue-300 font-medium text-sm">
-            Manage Agents →
-          </button>
-        </div>
 
-        {/* Upgrade Card */}
-        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg shadow-sm border border-slate-700 p-6 hover:shadow-md transition-shadow">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Upgrade</h3>
-            <div className="w-10 h-10 bg-blue-900/50 rounded-lg flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 17.27l4.15 2.51c.76.46 1.69-.22 1.49-1.08l-1.1-4.72 3.67-3.18c.67-.58.31-1.68-.57-1.75l-4.83-.41-1.89-4.46c-.34-.81-1.5-.81-1.84 0L9.19 8.63l-4.83.41c-.88.07-1.24 1.17-.57 1.75l3.67 3.18-1.1 4.72c-.2.86.73 1.54 1.49 1.08L12 17.27z"/>
-              </svg>
+          {/* Navigation Instructions */}
+          <div className="space-y-2 text-slate-300 text-base sm:text-lg leading-relaxed">
+            <p>
+              Use the <span className="text-cyan-400 font-semibold">sidebar</span> to navigate between your <span className="text-cyan-400 font-semibold">Meetings</span> and <span className="text-cyan-400 font-semibold">Assistants</span>. Click the <span className="text-cyan-400 font-semibold">AIssist logo</span> anytime to return to the home page. Use the user menu in the sidebar to log out.
+            </p>
+          </div>
+
+          {/* Warning Section */}
+          <div className="bg-gradient-to-r from-amber-900/40 to-yellow-900/40 border-l-4 border-amber-500/60 rounded-r-lg p-4 sm:p-5 space-y-3 shadow-md">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <div className="space-y-2 flex-1">
+                <p className="text-slate-200 font-semibold text-base sm:text-lg">
+                  Note: This is a demo/trial version.
+                </p>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Running real-time AI services involves operational costs, and as an F-1 student in the U.S., I'm unable to implement payments.
+                </p>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  You're allowed <span className="text-cyan-400 font-semibold">2–3 test sessions (about 10 minutes each)</span>.
+                </p>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Meetings cannot be deleted or edited. After each one, you can still view the recording, transcript, and AI chat.
+                </p>
+                <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-medium">
+                  In short — you get a few chances to explore what AIssist can do. Enjoy your demo!
+                </p>
+              </div>
             </div>
           </div>
-          <p className="text-slate-300 text-sm mb-4">
-            Unlock premium features and advanced capabilities.
-          </p>
-          <button className="text-blue-400 hover:text-blue-300 font-medium text-sm">
-            Upgrade Now →
-          </button>
         </div>
       </div>
     </div>

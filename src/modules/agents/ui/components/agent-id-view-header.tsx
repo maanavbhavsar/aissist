@@ -34,17 +34,17 @@ export function AgentIdViewHeader({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/agents" className="font-medium text-xl">
+              <Link href="/dashboard/agents" className="font-medium text-xl text-white hover:text-cyan-400 transition-colors">
                 My Agents
               </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator className="text-foreground text-xl font-medium [&>svg]:size-4">
+          <BreadcrumbSeparator className="text-white text-xl font-medium [&>svg]:size-4">
             <ChevronRight />
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/dashboard/agents/${agentId}`} className="text-foreground">
+              <Link href={`/dashboard/agents/${agentId}`} className="text-white hover:text-cyan-400 transition-colors">
                 {agentName}
               </Link>
             </BreadcrumbLink>

@@ -1,70 +1,114 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { StreamChat } from 'stream-chat'
-import {
-  Chat,
-  Channel,
-  Window,
-  MessageList,
-  MessageInput,
-  Thread,
-} from 'stream-chat-react'
-import 'stream-chat-react/dist/css/index.css'
-import { trpc } from '@/trpc/client'
+import { LoadingState } from "@/components/loading-state";
+import { useTRPC } from "@/trpc/client";
+import { useEffect, useState } from "react";
+import { Channel, Chat, MessageInput, MessageList, Thread, Window } from "stream-chat-react";
+import { useCreateChatClient } from "stream-chat-react";
+import type { Channel as StreamChannel } from "stream-chat";
+import { MessageSquare } from "lucide-react";
+import "stream-chat-react/dist/css/v2/index.css";
+import { useMutation } from "@tanstack/react-query";
 
 interface ChatUIProps {
-  meetingId: string
-  meetingName: string
-  userId: string
-  username: string
-  userImage?: string
+    meetingId: string;
+    meetingName: string;
+    userId: string;
+    userName: string;
+    userImage: string | undefined;
 }
 
-export default function ChatUI({ meetingId, meetingName, userId, username, userImage }: ChatUIProps) {
-  const [client, setClient] = useState<StreamChat | null>(null)
-  const [channel, setChannel] = useState<any>(null)
-  const generateChatToken = trpc.meetings.generateChatToken.useMutation()
+export const ChatUI = ({
+    meetingId,
+    meetingName,
+    userId,
+    userName,
+    userImage
+}: ChatUIProps) => {
 
-  useEffect(() => {
-    let mounted = true
-    async function init() {
-      const token = await generateChatToken.mutateAsync()
-      if (!mounted) return
-      const c = new StreamChat(process.env.NEXT_PUBLIC_STREAM_CHAT_API_KEY!)
-      await c.connectUser({ id: userId, name: username, image: userImage ?? '' }, token)
-      setClient(c)
-      const ch = c.channel('messaging', meetingId, {
-        members: [userId],
-        // optional: add extra metadata
-      })
-      await ch.watch()
-      setChannel(ch)
+    const trpc = useTRPC();
+    const generateChatToken = useMutation(trpc.meetings.generateChatToken.mutationOptions());
+
+    const [channel, setChannel] = useState<StreamChannel>();
+
+    const client = useCreateChatClient({
+        apiKey: process.env.NEXT_PUBLIC_STREAM_CHAT_API_KEY!,
+        tokenOrProvider: generateChatToken.mutateAsync,
+        userData: {
+            id: userId,
+            name: userName,
+            image: userImage
+        }
+    });
+
+    useEffect(() => {
+        if (!client) return;
+
+        const channel = client.channel("messaging", meetingId, {
+            members: [userId],
+        });
+
+        setChannel(channel);
+    }, [client, meetingId, meetingName, userId]);
+
+    if (!client) {
+        return (
+            <LoadingState title="Loading Chat.." description="This may take many seconds" />
+        );
     }
-    init()
-    return () => {
-      mounted = false
-      if (client) client.disconnectUser().catch(() => {})
-    }
-  }, [userId, username, userImage, generateChatToken])
 
-  if (!client || !channel) {
-    return <div className="p-4">Loading chat...</div>
-  }
-
-  return (
-    <div className="bg-white rounded-lg border overflow-hidden">
-      <Chat client={client}>
-        <Channel channel={channel}>
-          <Window>
-            <div style={{ height: '60vh', overflow: 'auto' }}>
-              <MessageList />
+    return (
+        <div className="flex flex-col h-full gap-4">
+            {/* Header */}
+            <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-600/20 border border-amber-600/30">
+                    <MessageSquare className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                    <h3 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-500 to-amber-700">
+                        Chat
+                    </h3>
+                </div>
             </div>
-            <MessageInput />
-          </Window>
-          <Thread />
-        </Channel>
-      </Chat>
-    </div>
-  )
-}
+
+            {/* Chat */}
+            <div className="flex-1 rounded-lg bg-zinc-800/40 border border-zinc-700/30 overflow-hidden">
+                <Chat client={client} theme="str-chat__theme-dark">
+                    <Channel channel={channel}>
+                        <Window>
+                            <MessageList />
+                            <MessageInput />
+                        </Window>
+                        <Thread />
+                    </Channel>
+                </Chat>
+            </div>
+
+            {/* Minimal custom styles */}
+            <style jsx global>{`
+                .str-chat__container {
+                    background: transparent !important;
+                }
+                
+                .str-chat__message-simple {
+                    background: rgba(39, 39, 42, 0.4) !important;
+                    border-radius: 0.5rem !important;
+                }
+                
+                .str-chat__message-sender-name {
+                    color: rgb(252, 211, 77) !important;
+                }
+                
+                .str-chat__input-flat {
+                    background: rgba(39, 39, 42, 0.6) !important;
+                    border: 1px solid rgba(113, 113, 122, 0.4) !important;
+                    border-radius: 0.5rem !important;
+                }
+                
+                .str-chat__input-flat:focus-within {
+                    border-color: rgba(217, 119, 6, 0.5) !important;
+                }
+            `}</style>
+        </div>
+    );
+};

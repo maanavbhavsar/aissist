@@ -12,7 +12,7 @@ export const NewAgentDialog = ({ open, onOpenChange }: NewAgentDialogProps) => {
             <AgentForm
             onSuccess={() => onOpenChange(false)}
             onCancel={() => onOpenChange(false)}
-            initialValues={{ id: "", name: "", instructions: "", createdAt: "", updatedAt: "", userId: "" }}
+            initialValues={{ id: "", name: "", instructions: "", createdAt: "", updatedAt: "", userId: "", meetingCount: 0 }}
             />
         </ResponsiveDialog>
     );
