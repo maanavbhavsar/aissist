@@ -26,10 +26,10 @@ export const AgentsListHeader = () => {
         <> 
         <NewAgentDialog open={open} onOpenChange={setDialogOpen} />
             <div className="py-2 px-2 md:px-8 flex flex-col gap-2 md:gap-4">
-            <div className="flex items-center justify-between">
-                <h5 className="font-medium text-base md:text-xl text-white">My Agents</h5>
-                <Button onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <PlusIcon /> New Agent
+            <div className="flex items-center justify-between gap-2">
+                <h5 className="font-medium text-base md:text-xl text-white truncate">My Agents</h5>
+                <Button onClick={() => setDialogOpen(true)} className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-sm md:text-base flex-shrink-0 shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/60 transition-all duration-300">
+                    <PlusIcon className="w-4 h-4" /> <span className="hidden sm:inline">New Agent</span>
                 </Button>
             </div>
             {/* Desktop: No scroll area - filters flow naturally */}

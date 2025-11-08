@@ -11,7 +11,13 @@ export const NewMeetingDialog = ({ open, onOpenChange }: NewMeetingDialogProps) 
     const router = useRouter();
 
     return (
-        <ResponsiveDialog open={open} onOpenChange={onOpenChange} title="Create a new meeting" description="" showSearch={false}>
+        <ResponsiveDialog 
+            open={open} 
+            onOpenChange={onOpenChange} 
+            title="Create a new meeting" 
+            description="Fill out the form below to schedule a new meeting with your AI agent." 
+            showSearch={false}
+        >
             <MeetingForm
                 onSuccess={(id) => {
                     onOpenChange(false);
@@ -32,7 +38,11 @@ export const NewMeetingDialog = ({ open, onOpenChange }: NewMeetingDialogProps) 
                     recordingUrl: null, 
                     summary: null, 
                     createdAt: "", 
-                    updatedAt: "" 
+                    updatedAt: "",
+                    agent: {
+                        id: "",
+                        name: ""
+                    }
                 }}
             />
         </ResponsiveDialog>

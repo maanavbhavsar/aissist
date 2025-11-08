@@ -1,6 +1,6 @@
 import { columns } from "./columns"
 import type { AgentGetOne } from "../../types"
-import { DataTable } from "./data-table"
+import { DataTable } from "@/components/data-table"
 
 async function getData(): Promise<AgentGetOne[]> {
   // This would typically fetch from your API

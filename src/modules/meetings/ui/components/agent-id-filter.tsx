@@ -24,7 +24,7 @@ export const AgentIdFilter = () => {
       className="h-8 w-[140px] sm:w-[160px] md:w-[240px] bg-slate-800 text-white border-slate-600 text-sm"
       placeholder="Agent"
       options={
-        (Array.isArray((data as any)?.items) ? (data as any).items : []).map((agent: AgentGetMany["items"][0]) => ({
+        (Array.isArray(data?.items) ? data.items : []).map((agent: AgentGetMany["items"][0]) => ({
           id: agent.id as string,
           value: agent.id,
           children: (

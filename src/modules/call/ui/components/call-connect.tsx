@@ -1,6 +1,6 @@
 import {Call,CallingState, StreamCall,StreamVideo,StreamVideoClient} from "@stream-io/video-react-sdk"
 import { LoaderIcon } from "lucide-react";
-import { useEffect, useCallback, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { CallUI } from "./call-ui";
 
@@ -22,15 +22,20 @@ export const CallConnect = ({
     
     // Memoize the token provider function to prevent recreation on every render
     const tokenProvider = useCallback(async () => {
-        const response = await fetch('/api/trpc/meetings.generateToken', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        const data = await response.json();
-        return data.result.data;
-    }, []);
+        try {
+            const response = await fetch('/api/trpc/meetings.generateToken', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            return data.result.data;
+        } catch (error) {
+            console.error(`❌ Token request failed:`, error);
+            throw error;
+        }
+    }, [userId]);
 
     // Memoize user object to prevent recreation on every render
     const user = useMemo(() => ({
@@ -55,32 +60,36 @@ export const CallConnect = ({
     const call = useMemo(() => {
         if (!client) return undefined;
         
+        console.log(`🔄 Creating call for meeting: ${meetingId}`);
         const _call = client.call("default", meetingId);
-        // Don't disable camera/microphone here - let the lobby handle permissions
         callRef.current = _call;
         
-        // Note: Call settings are configured at the client level or through the Stream dashboard
+        console.log(`✅ Call created with ID: ${_call.id}`);
+        
+        // Add a small delay to ensure the server-side call is fully created
+        setTimeout(async () => {
+            try {
+                const callState = await _call.get();
+                console.log(`📊 Call state after creation:`, {
+                    id: callState?.call?.id,
+                    participants: (callState as any)?.call?.participants?.length || 0,
+                    state: (callState as any)?.call?.state
+                });
+            } catch (error) {
+                console.warn(`⚠️ Could not fetch call state:`, error);
+                console.log(`📝 Call may still be initializing on server`);
+            }
+        }, 1000);
         
         return _call;
     }, [client, meetingId]);
 
-    // Cleanup effect for the call - only run on component unmount
-    useEffect(() => {
-        return () => {
-            const currentCall = callRef.current;
-            if (currentCall && currentCall.state.callingState !== CallingState.LEFT) {
-                currentCall.leave();
-                currentCall.endCall();
-            }
-        };
-    }, []); // Empty dependency array - only run on unmount
-
     if(!client || !call){
         return (
-            <div className="flex h-screen justify-center items-center bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900">
+            <div className="flex h-screen justify-center items-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
                 <div className="flex flex-col items-center gap-4">
-                    <LoaderIcon className="size-8 animate-spin text-blue-400"/>
-                    <p className="text-blue-200 text-sm">Connecting to call...</p>
+                    <LoaderIcon className="size-8 animate-spin text-cyan-400"/>
+                    <p className="text-cyan-200 text-sm">Connecting to call...</p>
                 </div>
             </div>
 

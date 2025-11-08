@@ -27,11 +27,11 @@ export const columns: ColumnDef<AgentGetMany["items"][number]>[] = [
                 {getAgentEmoji(row.original.name as string)}
               </AvatarFallback>
             </Avatar>
-            <span className="font-semibold capitalize text-white">{row.original.name as string}</span>
+            <span className="font-semibold capitalize text-white truncate">{row.original.name as string}</span>
           </div>
           <div className="flex items-center gap-x-2">
-            <CornerDownRight className="size-3 text-slate-400" />
-            <span className="text-sm text-slate-400 max-w-[200px] truncate capitalize">
+            <CornerDownRight className="size-3 text-slate-400 flex-shrink-0" />
+            <span className="text-sm text-slate-300 max-w-full sm:max-w-[200px] truncate capitalize">
               {row.original.instructions as string}
             </span>
           </div>
@@ -44,11 +44,11 @@ export const columns: ColumnDef<AgentGetMany["items"][number]>[] = [
     header: "Meetings",
     cell: ({ row }) => {
       return (
-        <Badge variant="outline" className="flex items-center gap-x-2 border-blue-400 text-blue-300 bg-blue-900/30">
-          <svg className="size-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+        <Badge variant="outline" className="flex items-center gap-x-2 border-cyan-400 text-cyan-300 bg-cyan-900/30">
+          <svg className="size-4 text-cyan-400" fill="currentColor" viewBox="0 0 24 24">
             <path d="M17 10h-2v2h2v-2zm4-8H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l2 2V4c0-1.1-.9-2-2-2zM8 15c0 .55-.45 1-1 1s-1-.45-1-1v-2H3v2c0 1.1.9 2 2 2s2-.9 2-2v-2H8v2zM9 11H3c0-1.1.9-2 2-2s2 .9 2 2z"/>
           </svg>
-          {(row.original.meetingCount as number) || 5} {(row.original.meetingCount as number) === 1 ? 'meeting' : 'meetings'}
+          {(row.original.meetingCount as number) ?? 0} {(row.original.meetingCount as number) === 1 ? 'meeting' : 'meetings'}
         </Badge>
       );
     },

@@ -1,10 +1,9 @@
 import {createTRPCRouter, protectedProcedure} from "@/trpc/init";
 import {db} from "@/db";
-import{agent} from "@/db/schema";
+import{agent, meeting} from "@/db/schema";
 import {agentsInsertSchema, agentsUpdateSchema} from "../schemas";
 import {z} from "zod";
 import { eq, and, like, desc, count } from "drizzle-orm";
-import { sql } from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MIN_PAGE_SIZE, MAX_PAGE_SIZE } from "@/constants";
 import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
@@ -20,17 +19,25 @@ export const agentsRouter = createTRPCRouter({
             userId: agent.userId,
             createdAt: agent.createdAt,
             updatedAt: agent.updatedAt,
-            meetingCount: sql<number>`5`.as('meetingCount')
         }).from(agent).where(and(eq(agent.id, input.id), eq(agent.userId, ctx.auth.user.id)));
         if (!existingAgent) {
             throw new TRPCError({ code: "NOT_FOUND", message: "Agent not found" });
         }
-        return existingAgent;
+
+        const [meetingCountResult] = await db.select({ count: count() })
+            .from(meeting)
+            .where(eq(meeting.agentId, existingAgent.id));
+
+        return {
+            ...existingAgent,
+            meetingCount: meetingCountResult.count
+        };
     }),
     getMany: protectedProcedure.input(z.object({
         page: z.number().default(DEFAULT_PAGE),
         pageSize: z.number().min(MIN_PAGE_SIZE).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
         search: z.string().optional(),
+        shouldFilter: z.boolean().optional().default(true),
     })).query(async ({ input, ctx }) => {
         const { page, pageSize, search } = input;
         
@@ -49,13 +56,26 @@ export const agentsRouter = createTRPCRouter({
             userId: agent.userId,
             createdAt: agent.createdAt,
             updatedAt: agent.updatedAt,
-            meetingCount: sql<number>`5`.as('meetingCount')
         })
         .from(agent)
         .where(and(...whereConditions))
         .orderBy(desc(agent.createdAt), desc(agent.id))
         .limit(pageSize)
         .offset((page - 1) * pageSize);
+
+        // Get meeting counts for each agent
+        const agentsWithMeetingCounts = await Promise.all(
+            data.map(async (agentData) => {
+                const [meetingCountResult] = await db.select({ count: count() })
+                    .from(meeting)
+                    .where(eq(meeting.agentId, agentData.id));
+                
+                return {
+                    ...agentData,
+                    meetingCount: meetingCountResult.count
+                };
+            })
+        );
         
         const [totalResult] = await db.select({ count: count() })
         .from(agent)
@@ -64,23 +84,19 @@ export const agentsRouter = createTRPCRouter({
         const totalPages = Math.ceil(totalResult.count / pageSize);
         
         return {
-            items: data,
+            items: agentsWithMeetingCounts,
             total: totalResult.count,
             totalPages,
         };
     }),
     create: protectedProcedure.input(agentsInsertSchema).mutation(async ({input, ctx}) => {
         try {
-            console.log("Creating agent with input:", input);
-            console.log("User ID:", ctx.auth.user.id);
-            
             const [createdAgent] = await db.insert(agent).values({
                 id: nanoid(),
                 ...input,
                 userId: ctx.auth.user.id,
             }).returning();
             
-            console.log("Agent created successfully:", createdAgent);
             return createdAgent;
         } catch (error) {
             console.error("Database error creating agent:", error);

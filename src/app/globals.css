@@ -125,14 +125,84 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
   body {
     @apply bg-background text-foreground;
   }
-}
-
-@layer base {
+  
   button:not(disabled), 
   [role="button"]:not(disabled) {
     cursor: pointer;
   }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  /* Logo glow animation - professional pulsing effect */
+  @keyframes logo-glow {
+    0%, 100% {
+      filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.4)) 
+              drop-shadow(0 0 12px rgba(6, 182, 212, 0.3))
+              drop-shadow(0 0 20px rgba(6, 182, 212, 0.2));
+      opacity: 1;
+    }
+    50% {
+      filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.7)) 
+              drop-shadow(0 0 25px rgba(6, 182, 212, 0.5))
+              drop-shadow(0 0 35px rgba(6, 182, 212, 0.3));
+      opacity: 0.95;
+    }
+  }
+
+  @keyframes logo-glow-subtle {
+    0%, 100% {
+      filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.35)) 
+              drop-shadow(0 0 10px rgba(6, 182, 212, 0.25));
+      opacity: 1;
+    }
+    50% {
+      filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.6)) 
+              drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
+      opacity: 0.96;
+    }
+  }
+
+  .logo-glow {
+    animation: logo-glow 3s ease-in-out infinite;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+
+  .logo-glow:hover {
+    animation: none;
+    filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.8)) 
+            drop-shadow(0 0 30px rgba(6, 182, 212, 0.6))
+            drop-shadow(0 0 40px rgba(6, 182, 212, 0.4)) !important;
+  }
+
+  .logo-glow-subtle {
+    animation: logo-glow-subtle 3s ease-in-out infinite;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
+
+         .logo-glow-subtle:hover {
+           animation: none;
+           filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.8))
+                   drop-shadow(0 0 25px rgba(6, 182, 212, 0.6)) !important;
+         }
+
+         .logo-icon-only {
+           clip-path: polygon(0 0, 100% 0, 100% 60%, 0 60%);
+           object-fit: cover;
+           object-position: center top;
+         }
 }

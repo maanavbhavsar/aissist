@@ -17,10 +17,10 @@ export const CallProvider = ({meetingId,meetingName}:Props) =>{
 
     if(! data || isPending){
         return (
-            <div className="flex h-screen justify-center items-center bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900">
+            <div className="flex h-screen justify-center items-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
                 <div className="flex flex-col items-center gap-4">
-                    <LoaderIcon className="size-8 animate-spin text-blue-400"/>
-                    <p className="text-blue-200 text-sm">Loading session...</p>
+                    <LoaderIcon className="size-8 animate-spin text-cyan-400"/>
+                    <p className="text-cyan-200 text-sm">Loading session...</p>
                 </div>
             </div>
 

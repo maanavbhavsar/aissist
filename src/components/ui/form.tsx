@@ -7,6 +7,7 @@ import {
 	type FieldValues,
 	FormProvider,
 	useFormContext,
+	type FieldError,
 } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
@@ -26,7 +27,7 @@ function getErrorByPath(errors: unknown, path: string): unknown {
 	if (!errors) return undefined
 	return path
 		.split(".")
-		.reduce<any>((acc, key) => (acc && typeof acc === "object" ? (acc as any)[key] : undefined), errors)
+		.reduce<unknown>((acc, key) => (acc && typeof acc === "object" ? (acc as Record<string, unknown>)[key] : undefined), errors)
 }
 
 const Form = FormProvider
@@ -53,7 +54,7 @@ function FormLabel({ className, ...props }: React.ComponentProps<"label">) {
 function FormControl({ className, ...props }: React.ComponentProps<typeof Slot>) {
 	const name = useFormFieldName()
 	const { formState } = useFormContext()
-	const error = getErrorByPath(formState.errors, name) as any
+	const error = getErrorByPath(formState.errors, name) as FieldError | undefined
 
 	return (
 		<Slot
@@ -69,7 +70,7 @@ function FormControl({ className, ...props }: React.ComponentProps<typeof Slot>)
 function FormMessage({ className, children, ...props }: React.ComponentProps<"p">) {
 	const name = useFormFieldName()
 	const { formState } = useFormContext()
-	const error = getErrorByPath(formState.errors, name) as any
+	const error = getErrorByPath(formState.errors, name) as FieldError | undefined
 	const message: React.ReactNode = children ?? (error?.message as React.ReactNode)
 
 	if (!message) return null

@@ -20,3 +20,12 @@ export type StreamTranscriptItem = {
   start_ts: number;
   stop_ts: number;
 };
+
+export type TranscriptItemWithSpeaker = StreamTranscriptItem & {
+  speaker: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  meetingStartedAt?: string | null;
+};
