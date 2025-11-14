@@ -4,7 +4,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, FileText, ScrollText, Video, MessageSquare } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Transcript from '@/modules/meetings/ui/components/transcript'
@@ -44,11 +44,35 @@ export default function CompletedState({
 
       <Tabs defaultValue="summary" className="w-full flex-1 flex flex-col min-h-0">
         <div className="w-full overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 sm:overflow-visible scrollbar-hide">
-          <TabsList className="inline-flex w-auto min-w-max sm:grid sm:w-full sm:grid-cols-4 h-auto gap-2 sm:gap-1">
-            <TabsTrigger value="summary" className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium">Summary</TabsTrigger>
-            <TabsTrigger value="transcript" className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium">Transcript</TabsTrigger>
-            <TabsTrigger value="recording" className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium">Recording</TabsTrigger>
-            <TabsTrigger value="chat" className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium">Chat</TabsTrigger>
+          <TabsList className="inline-flex w-auto min-w-max sm:grid sm:w-full sm:grid-cols-4 h-auto gap-2 sm:gap-1 bg-slate-800/50 border border-slate-700/50">
+            <TabsTrigger 
+              value="summary" 
+              className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium flex items-center gap-2 text-white bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50"
+            >
+              <FileText className="w-4 h-4" />
+              Summary
+            </TabsTrigger>
+            <TabsTrigger 
+              value="transcript" 
+              className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium flex items-center gap-2 text-white bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50"
+            >
+              <ScrollText className="w-4 h-4" />
+              Transcript
+            </TabsTrigger>
+            <TabsTrigger 
+              value="recording" 
+              className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium flex items-center gap-2 text-white bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50"
+            >
+              <Video className="w-4 h-4" />
+              Recording
+            </TabsTrigger>
+            <TabsTrigger 
+              value="chat" 
+              className="flex-shrink-0 whitespace-nowrap px-6 py-2.5 sm:px-3 sm:py-1.5 text-sm font-medium flex items-center gap-2 text-white bg-transparent data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-600 data-[state=active]:to-cyan-500 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-cyan-500/50"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Chat
+            </TabsTrigger>
           </TabsList>
         </div>
         
@@ -74,13 +98,14 @@ export default function CompletedState({
                     components={{
                       h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-white mb-4 mt-6 first:mt-0" {...props} />,
                       h2: ({node, ...props}) => <h2 className="text-xl font-bold text-cyan-400 mb-3 mt-5 first:mt-0" {...props} />,
-                      h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-slate-200 mb-2 mt-4 first:mt-0" {...props} />,
-                      p: ({node, ...props}) => <p className="text-slate-300 leading-relaxed mb-4" {...props} />,
-                      ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-2 mb-4 text-slate-300" {...props} />,
-                      ol: ({node, ...props}) => <ol className="list-decimal list-inside space-y-2 mb-4 text-slate-300" {...props} />,
-                      li: ({node, ...props}) => <li className="text-slate-300 leading-relaxed" {...props} />,
+                      h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-white mb-3 mt-6 first:mt-0" {...props} />,
+                      h4: ({node, ...props}) => <h4 className="text-base font-semibold text-cyan-300 mb-2 mt-4 ml-6" {...props} />,
+                      p: ({node, ...props}) => <p className="text-slate-200 leading-relaxed mb-4" {...props} />,
+                      ul: ({node, ...props}) => <ul className="list-disc space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
+                      ol: ({node, ...props}) => <ol className="list-decimal space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
+                      li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
                       strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />,
-                      em: ({node, ...props}) => <em className="italic text-slate-300" {...props} />,
+                      em: ({node, ...props}) => <em className="italic text-slate-200" {...props} />,
                       code: ({node, ...props}) => <code className="bg-slate-700/50 text-cyan-300 px-1.5 py-0.5 rounded text-sm" {...props} />,
                     }}
                   >

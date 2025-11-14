@@ -61,11 +61,11 @@ export const ChatUI = ({
         <div className="flex flex-col h-full gap-4">
             {/* Header */}
             <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-amber-600/20 border border-amber-600/30">
-                    <MessageSquare className="w-5 h-5 text-amber-600" />
+                <div className="p-2 rounded-lg bg-cyan-500/20 border border-cyan-500/30">
+                    <MessageSquare className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-orange-500 to-amber-700">
+                    <h3 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-600">
                         Chat
                     </h3>
                 </div>
@@ -96,7 +96,7 @@ export const ChatUI = ({
                 }
                 
                 .str-chat__message-sender-name {
-                    color: rgb(252, 211, 77) !important;
+                    color: rgb(34, 211, 238) !important;
                 }
                 
                 .str-chat__input-flat {
@@ -106,7 +106,7 @@ export const ChatUI = ({
                 }
                 
                 .str-chat__input-flat:focus-within {
-                    border-color: rgba(217, 119, 6, 0.5) !important;
+                    border-color: rgba(6, 182, 212, 0.5) !important;
                 }
             `}</style>
         </div>

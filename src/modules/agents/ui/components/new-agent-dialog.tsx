@@ -8,7 +8,14 @@ interface NewAgentDialogProps {
 
 export const NewAgentDialog = ({ open, onOpenChange }: NewAgentDialogProps) => {
     return (
-        <ResponsiveDialog open={open} onOpenChange={onOpenChange} title="New Agent" description="Create a new agent" showSearch={false}>
+        <ResponsiveDialog 
+            open={open} 
+            onOpenChange={onOpenChange} 
+            title="New Agent" 
+            description="Create a new agent" 
+            showSearch={false}
+            maxContentHeight="max-h-80"
+        >
             <AgentForm
             onSuccess={() => onOpenChange(false)}
             onCancel={() => onOpenChange(false)}

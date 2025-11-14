@@ -205,4 +205,71 @@
            object-fit: cover;
            object-position: center top;
          }
+
+  /* Rotating Science background animations */
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin-reverse-slow {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow linear infinite;
+  }
+
+  .animate-spin-reverse-slow {
+    animation: spin-reverse-slow linear infinite;
+  }
+
+  @keyframes spin-medium {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes spin-fast {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin-medium {
+    animation: spin-medium 8s linear infinite;
+  }
+
+  .animate-spin-fast {
+    animation: spin-fast 5s linear infinite;
+  }
+
+  /* Bouncing animation for sidebar symbols */
+  @keyframes bounce-slow {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
 }

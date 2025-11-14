@@ -1,8 +1,9 @@
 "use client";
 
 import { ReactNode, useState, useRef, useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { DashboardNavbar } from "@/components/dashboard-navbar";
 import { UserDrawer } from "@/components/user-drawer";
@@ -10,7 +11,6 @@ import {
   Video, 
   Briefcase, 
   ChevronDown,
-  CreditCard,
   LogOut
 } from "lucide-react";
 
@@ -20,16 +20,12 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
-  const pathname = usePathname();
   const { data: session, isPending } = authClient.useSession();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  
-  // Check if we're on the home page
-  const isHomePage = pathname === '/dashboard';
 
   // Client-side hydration
   useEffect(() => {
@@ -82,8 +78,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
+        <div className="flex flex-col items-center gap-4">
+          <Image 
+            src="/Science.png" 
+            alt="Loading" 
+            width={64} 
+            height={64}
+            className="animate-spin-slow"
+            style={{ animationDuration: '3s' }}
+          />
+          <p className="text-xl font-medium bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -112,7 +118,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative">
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative z-auto">
       {/* Mobile backdrop */}
       {isMobile && !isSidebarCollapsed && (
         <div 
@@ -127,10 +133,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className={`${isSidebarCollapsed ? 'p-4' : 'p-6'} border-b border-slate-800/50`}>
           <Link href="/dashboard" className="flex items-center justify-center">
             {isSidebarCollapsed ? (
-              <img src="/aissist_colored_only.png" alt="AIssist" className="w-12 h-12 logo-glow cursor-pointer" />
+              <img src="/Aissist Logo.png" alt="AIssist" className="h-12 w-auto logo-glow cursor-pointer object-contain max-w-12" />
             ) : (
               <div className="flex items-center gap-3 w-full">
-                <img src="/aissist_colored_only.png" alt="AIssist" className="w-12 h-12 logo-glow cursor-pointer flex-shrink-0" />
+                <img src="/Aissist Logo.png" alt="AIssist" className="h-12 w-auto logo-glow cursor-pointer flex-shrink-0 object-contain max-w-12" />
                 <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">AIssist</span>
               </div>
             )}
@@ -141,15 +147,59 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <nav className={`flex-1 ${isSidebarCollapsed ? 'p-2' : 'p-6'}`}>
           <ul className="space-y-4">
             <li>
-              <Link href="/dashboard/meetings" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 px-3 py-2 rounded-lg hover:bg-slate-800/50 group`}>
-                <Video className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                {!isSidebarCollapsed && <span className="font-medium">Meetings</span>}
+              <Link href="/dashboard/meetings" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'justify-between'} text-slate-300 hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 px-3 py-2 rounded-lg hover:bg-slate-800/50 group relative`}>
+                <div className={`flex items-center ${isSidebarCollapsed ? 'gap-0' : 'gap-3'}`}>
+                  <Video className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  {!isSidebarCollapsed && <span className="font-medium">Meetings</span>}
+                </div>
+                {!isSidebarCollapsed && (
+                  <div className="flex items-center gap-1">
+                    <Image 
+                      src="/Science.png" 
+                      alt="" 
+                      width={12} 
+                      height={12} 
+                      className="animate-bounce-slow opacity-60"
+                      style={{ animationDelay: '0s' }}
+                    />
+                    <Image 
+                      src="/Science.png" 
+                      alt="" 
+                      width={12} 
+                      height={12} 
+                      className="animate-bounce-slow opacity-60"
+                      style={{ animationDelay: '0.2s' }}
+                    />
+                  </div>
+                )}
               </Link>
             </li>
             <li>
-              <Link href="/dashboard/agents" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3'} text-slate-300 hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 px-3 py-2 rounded-lg hover:bg-slate-800/50 group`}>
-                <Briefcase className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                {!isSidebarCollapsed && <span className="font-medium">Agents</span>}
+              <Link href="/dashboard/agents" className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'justify-between'} text-slate-300 hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 px-3 py-2 rounded-lg hover:bg-slate-800/50 group relative`}>
+                <div className={`flex items-center ${isSidebarCollapsed ? 'gap-0' : 'gap-3'}`}>
+                  <Briefcase className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                  {!isSidebarCollapsed && <span className="font-medium">Agents</span>}
+                </div>
+                {!isSidebarCollapsed && (
+                  <div className="flex items-center gap-1">
+                    <Image 
+                      src="/Science.png" 
+                      alt="" 
+                      width={12} 
+                      height={12} 
+                      className="animate-bounce-slow opacity-60"
+                      style={{ animationDelay: '0s' }}
+                    />
+                    <Image 
+                      src="/Science.png" 
+                      alt="" 
+                      width={12} 
+                      height={12} 
+                      className="animate-bounce-slow opacity-60"
+                      style={{ animationDelay: '0.2s' }}
+                    />
+                  </div>
+                )}
               </Link>
             </li>
           </ul>
@@ -195,10 +245,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 
                 {/* Menu Items */}
                 <div className="py-1">
-                  <button className="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition-colors">
-                    <CreditCard className="w-4 h-4 mr-3" />
-                    <span>Billing</span>
-                  </button>
                   <button
                     onClick={handleSignOut}
                     className="flex items-center w-full px-4 py-2 text-slate-700 hover:bg-slate-100 transition-colors"
@@ -223,16 +269,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         />
         
         {/* Page Content */}
-        <div className="flex-1 bg-transparent min-w-0 overflow-x-hidden">
+        <div className="flex-1 bg-transparent min-w-0 overflow-x-hidden relative z-10">
           <div className={`${isMobile ? 'p-2 sm:p-4' : 'p-6'}`}>
-            {isHomePage && (
-              <div className={`${isMobile ? 'mb-3 sm:mb-4' : 'mb-6'}`}>
-                <h1 className={`${isMobile ? 'text-lg sm:text-xl' : 'text-2xl'} font-semibold text-white truncate`}>
-                  Welcome back, {session.user.name}
-                </h1>
-              </div>
-            )}
-
             {children}
           </div>
         </div>

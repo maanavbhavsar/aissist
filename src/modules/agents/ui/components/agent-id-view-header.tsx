@@ -34,7 +34,7 @@ export function AgentIdViewHeader({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/agents" className="font-medium text-xl text-white hover:text-cyan-400 transition-colors">
+              <Link href="/dashboard/agents" className="font-medium text-xl text-white hover:text-cyan-400 hover:bg-slate-700/30 px-2 py-1 rounded transition-colors">
                 My Agents
               </Link>
             </BreadcrumbLink>
@@ -44,7 +44,7 @@ export function AgentIdViewHeader({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/dashboard/agents/${agentId}`} className="text-white hover:text-cyan-400 transition-colors">
+              <Link href={`/dashboard/agents/${agentId}`} className="text-white hover:text-cyan-400 hover:bg-slate-700/30 px-2 py-1 rounded transition-colors">
                 {agentName}
               </Link>
             </BreadcrumbLink>
@@ -54,7 +54,7 @@ export function AgentIdViewHeader({
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
+          <Button variant="ghost" className="hover:bg-slate-700/50 hover:text-white">
             <MoreVertical className="text-white" />
           </Button>
         </DropdownMenuTrigger>

@@ -34,7 +34,7 @@ export function MeetingIdViewHeader({
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="/dashboard/meetings" className="font-medium text-xl text-white hover:text-cyan-400 transition-colors">
+              <Link href="/dashboard/meetings" className="font-medium text-xl text-white hover:text-cyan-400 hover:bg-slate-700/30 px-2 py-1 rounded transition-colors">
                 My Meetings
               </Link>
             </BreadcrumbLink>
@@ -44,7 +44,7 @@ export function MeetingIdViewHeader({
           </BreadcrumbSeparator>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/dashboard/meetings/${meetingId}`} className="text-white hover:text-cyan-400 transition-colors">
+              <Link href={`/dashboard/meetings/${meetingId}`} className="text-white hover:text-cyan-400 hover:bg-slate-700/30 px-2 py-1 rounded transition-colors">
                 {meetingName}
               </Link>
             </BreadcrumbLink>
@@ -54,7 +54,7 @@ export function MeetingIdViewHeader({
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
+          <Button variant="ghost" className="hover:bg-slate-700/50 hover:text-white">
             <MoreVertical className="text-white" />
           </Button>
         </DropdownMenuTrigger>
