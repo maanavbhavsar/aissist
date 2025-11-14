@@ -135,13 +135,26 @@ export const meetingsRouter = createTRPCRouter({
                         throw new Error('Call creation verification failed');
                     }
                     
+                    type CallStateType = { 
+                        id?: string; 
+                        created_by_id?: string; 
+                        custom?: unknown; 
+                        state?: { participants?: unknown[] }; 
+                        call?: { 
+                            id?: string; 
+                            created_by_id?: string; 
+                            custom?: unknown; 
+                            state?: { participants?: unknown[] } 
+                        } 
+                    };
+                    const state = callState as unknown as CallStateType;
                     console.log(`✅ Stream call created and verified successfully for meeting ${createdMeeting.id}`);
                     console.log(`📊 Call state:`, {
-                        id: (callState as any)?.id || (callState as any)?.call?.id,
-                        created_by_id: (callState as any)?.created_by_id || (callState as any)?.call?.created_by_id,
-                        custom: (callState as any)?.custom || (callState as any)?.call?.custom,
-                        state: (callState as any)?.state || (callState as any)?.call?.state,
-                        participants: (callState as any)?.state?.participants?.length || (callState as any)?.call?.state?.participants?.length || 0
+                        id: state?.id || state?.call?.id,
+                        created_by_id: state?.created_by_id || state?.call?.created_by_id,
+                        custom: state?.custom || state?.call?.custom,
+                        state: state?.state || state?.call?.state,
+                        participants: state?.state?.participants?.length || state?.call?.state?.participants?.length || 0
                     });
                     
                     callCreated = true;

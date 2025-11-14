@@ -25,7 +25,7 @@ export const HomeView = () => {
         <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-8 space-y-5">
           {/* Welcome Text */}
           <p className="text-slate-800 text-sm leading-relaxed">
-            Welcome to <span className="font-semibold text-cyan-600">AIssist</span>, your full-stack SaaS where AI powers your productivity! Here's how it works:
+            Welcome to <span className="font-semibold text-cyan-600">AIssist</span>, your full-stack SaaS where AI powers your productivity! Here&apos;s how it works:
           </p>
 
           {/* How it Works Section */}

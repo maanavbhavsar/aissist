@@ -13,7 +13,7 @@ import{Input} from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 import{Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { useRouter } from "next/navigation";
 import {FaGoogle, FaGithub, FaLinkedin} from "react-icons/fa";
 const formSchema = z
@@ -32,7 +32,6 @@ const formSchema = z
 
 export const SignUpView = () => {
     const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -46,7 +45,6 @@ export const SignUpView = () => {
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setPending(true);
-        setError(null);
         try {
             await authClient.signUp.email({name: data.name, email: data.email, password: data.password, callbackURL: "/dashboard"});
             setPending(false);
@@ -63,24 +61,6 @@ export const SignUpView = () => {
                 form.setError("password", { message: "Invalid email or password" });
             }
         }
-    };
-
-    const onSocial = (provider: "google" | "github") => {
-        authClient.signIn.social({
-            provider: provider, 
-            callbackURL: "/dashboard"
-        },
-        {
-            onSuccess: () => {
-                setPending(false);
-            },
-            onError: (error) => {
-                setPending(false);
-                const errorMessage = error && typeof error === 'object' && 'message' in error ? (error as {message: string}).message : 'Authentication failed';
-                setError(errorMessage);
-            }
-        }
-    );
     };
     return (
         <div className="flex flex-col gap-4 md:gap-6 w-full relative">
