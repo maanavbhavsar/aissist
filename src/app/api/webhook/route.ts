@@ -243,14 +243,25 @@ export async function POST(req:NextRequest){
 
         // Check if agent is already in the call to prevent duplicates
         const callState = await call.get();
-        type CallState = { call?: { participants?: Array<{ user?: { id?: string }; user_id?: string }>; state?: { participants?: Array<{ user?: { id?: string }; user_id?: string }> } } } };
-        const state = callState as unknown as CallState;
-        const existingParticipants = state?.call?.participants || state?.call?.state?.participants || [];
-        const agentAlreadyPresent = existingParticipants.some((p) => p.user?.id === existingAgent.id || p.user_id === existingAgent.id);
-        
+        // Defensive check for StreamVideo SDK structure
+        let existingParticipants: Array<{ user?: { id?: string; name?: string }; user_id?: string }> = [];
+        if (callState && typeof callState === 'object') {
+            // Try different possible participant paths due to different SDK versions
+            if (Array.isArray((callState as any)?.call?.participants)) {
+                existingParticipants = (callState as any).call.participants;
+            } else if (Array.isArray((callState as any)?.call?.state?.participants)) {
+                existingParticipants = (callState as any).call.state.participants;
+            }
+        }
+
+        const agentAlreadyPresent = existingParticipants.some(
+            (p: { user?: { id?: string }; user_id?: string }) =>
+                p.user?.id === existingAgent.id || p.user_id === existingAgent.id
+        );
+
         if (agentAlreadyPresent) {
             console.log(`⚠️ Agent ${existingAgent.name} (${existingAgent.id}) already present in call ${meetingId} - skipping duplicate connection`);
-            console.log(`📊 Participants in call:`, existingParticipants.map((p) => ({ id: p.user?.id || p.user_id, name: p.user?.name })));
+            console.log(`📊 Participants in call:`, existingParticipants.map((p: { user?: { id?: string; name?: string }; user_id?: string }) => ({ id: p.user?.id || p.user_id, name: p.user?.name })));
             return NextResponse.json({ success: true, message: "Agent already connected" });
         }
         
@@ -275,24 +286,38 @@ export async function POST(req:NextRequest){
             console.log(`⏱️ Time limit set to 10 minutes for meeting ${meetingId}`);
         }
 
-            console.log(`🔗 Connecting OpenAI Realtime client...`);
-            console.log(`📊 Pre-connection diagnostics:`, {
-                agentId: existingAgent.id,
-                agentName: existingAgent.name,
-                hasInstructions: !!existingAgent.instructions,
-                instructionsLength: existingAgent.instructions?.length || 0,
-                openAiKeyPresent: !!process.env.OPENAI_API_KEY,
-                openAiKeyLength: process.env.OPENAI_API_KEY?.length || 0,
-                meetingId: meetingId,
-                callId: call.id,
-                sdkVersion: '0.7.17',
-                timestamp: new Date().toISOString()
-            });
+        console.log(`🔗 Connecting OpenAI Realtime client...`);
+        console.log(`📊 Pre-connection diagnostics:`, {
+            agentId: existingAgent.id,
+            agentName: existingAgent.name,
+            hasInstructions: !!existingAgent.instructions,
+            instructionsLength: existingAgent.instructions?.length || 0,
+            openAiKeyPresent: !!process.env.OPENAI_API_KEY,
+            openAiKeyLength: process.env.OPENAI_API_KEY?.length || 0,
+            meetingId: meetingId,
+            callId: call.id,
+            sdkVersion: '0.7.17',
+            timestamp: new Date().toISOString()
+        });
         
         // Type for Stream Video client with OpenAI methods
-        type VideoClient = { connectToOpenAIRealtime?: unknown; connectOpenAi?: unknown };
+        type ConnectOptions = {
+            call: unknown;
+            openAiApiKey: string;
+            agentUserId: string;
+            model: string;
+        };
+        type RealtimeClient = {
+            updateSession?: (options: { instructions: string }) => Promise<unknown>;
+            on?: (event: string, callback: unknown) => unknown;
+            sendUserMessageContent?: (content: string) => unknown;
+        };
+        type VideoClient = { 
+            connectToOpenAIRealtime?: (options: ConnectOptions) => Promise<RealtimeClient>; 
+            connectOpenAi?: (options: ConnectOptions) => Promise<RealtimeClient>; 
+        };
         
-        let realtimeClient;
+        let realtimeClient: RealtimeClient | undefined;
         try {
             console.log(`🔄 Step 1: Validating OpenAI API key...`);
             if (!process.env.OPENAI_API_KEY) {
@@ -319,20 +344,17 @@ export async function POST(req:NextRequest){
 
             console.log(`🔄 Step 3: Attempting OpenAI connection...`);
             // Use new API if available, fallback to old API for backward compatibility
-            if (hasNewMethod) {
-                realtimeClient = await videoClient.connectToOpenAIRealtime({
-                    call,
-                    openAiApiKey: process.env.OPENAI_API_KEY!,
-                    agentUserId: existingAgent.id,
-                    model: "gpt-4o-realtime-preview-2024-12-17",
-                });
-            } else if (hasOldMethod) {
-                realtimeClient = await videoClient.connectOpenAi({
-                    call,
-                    openAiApiKey: process.env.OPENAI_API_KEY!,
-                    agentUserId: existingAgent.id,
-                    model: "gpt-4o-realtime-preview-2024-12-17",
-                });
+            const connectOptions: ConnectOptions = {
+                call,
+                openAiApiKey: process.env.OPENAI_API_KEY!,
+                agentUserId: existingAgent.id,
+                model: "gpt-4o-realtime-preview-2024-12-17",
+            };
+            
+            if (hasNewMethod && videoClient.connectToOpenAIRealtime) {
+                realtimeClient = await videoClient.connectToOpenAIRealtime(connectOptions);
+            } else if (hasOldMethod && videoClient.connectOpenAi) {
+                realtimeClient = await videoClient.connectOpenAi(connectOptions);
             } else {
                 throw new Error("No valid OpenAI Realtime connector found in Stream SDK");
             }
@@ -363,9 +385,11 @@ Remember to introduce yourself when someone joins the call, and be proactive in 
                 console.log(`📝 Setting instructions (length: ${enhancedInstructions.length} chars)`);
                 console.log(`📝 Instructions preview: ${enhancedInstructions.substring(0, 200)}...`);
                 
-                await realtimeClient.updateSession({
-                    instructions: enhancedInstructions
-                });
+                if (realtimeClient?.updateSession) {
+                    await realtimeClient.updateSession({
+                        instructions: enhancedInstructions
+                    });
+                }
                 
                 console.log('✅ Session updated successfully with instructions');
                 console.log(`📊 Agent ${existingAgent.name} is ready with instructions`);
@@ -421,12 +445,9 @@ Remember to introduce yourself when someone joins the call, and be proactive in 
             console.log(`⚠️ OpenAI Realtime integration failed - agent will be available for post-call chat only`);
             // Continue anyway - meeting can still proceed without agent
         }
-
         
         return NextResponse.json({ success: true });
-
-
-    }else if (eventType === "call.session_participant_left"){
+    } else if (eventType === "call.session_participant_left") {
         const event = payload as CallSessionParticipantLeftEvent;
         const meetingId = event.call_cid.split(":")[1];
 
