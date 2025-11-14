@@ -244,13 +244,23 @@ export async function POST(req:NextRequest){
         // Check if agent is already in the call to prevent duplicates
         const callState = await call.get();
         // Defensive check for StreamVideo SDK structure
-        let existingParticipants: Array<{ user?: { id?: string; name?: string }; user_id?: string }> = [];
+        type Participant = { user?: { id?: string; name?: string }; user_id?: string };
+        type CallStateStructure = {
+            call?: {
+                participants?: Participant[];
+                state?: {
+                    participants?: Participant[];
+                };
+            };
+        };
+        let existingParticipants: Participant[] = [];
         if (callState && typeof callState === 'object') {
+            const state = callState as unknown as CallStateStructure;
             // Try different possible participant paths due to different SDK versions
-            if (Array.isArray((callState as any)?.call?.participants)) {
-                existingParticipants = (callState as any).call.participants;
-            } else if (Array.isArray((callState as any)?.call?.state?.participants)) {
-                existingParticipants = (callState as any).call.state.participants;
+            if (Array.isArray(state?.call?.participants)) {
+                existingParticipants = state.call.participants;
+            } else if (Array.isArray(state?.call?.state?.participants)) {
+                existingParticipants = state.call.state.participants;
             }
         }
 
