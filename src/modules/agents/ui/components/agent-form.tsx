@@ -1,7 +1,7 @@
 import type { AgentGetOne } from "../../types";
 import { useTRPC } from "@/trpc/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { agentsInsertSchema, agentsUpdateSchema } from "../../schemas";
+import { agentsInsertSchema } from "../../schemas";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";

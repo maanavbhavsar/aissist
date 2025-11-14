@@ -1,4 +1,4 @@
-import {Call,CallingState, StreamCall,StreamVideo,StreamVideoClient} from "@stream-io/video-react-sdk"
+import {Call, StreamCall,StreamVideo,StreamVideoClient} from "@stream-io/video-react-sdk"
 import Image from "next/image";
 import { useCallback, useMemo, useRef } from "react";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
@@ -35,7 +35,7 @@ export const CallConnect = ({
             console.error(`❌ Token request failed:`, error);
             throw error;
         }
-    }, [userId]);
+    }, []);
 
     // Memoize user object to prevent recreation on every render
     const user = useMemo(() => ({
@@ -70,10 +70,12 @@ export const CallConnect = ({
         setTimeout(async () => {
             try {
                 const callState = await _call.get();
+                type CallStateType = { call?: { id?: string; participants?: unknown[]; state?: unknown } };
+                const state = callState as unknown as CallStateType;
                 console.log(`📊 Call state after creation:`, {
-                    id: callState?.call?.id,
-                    participants: (callState as any)?.call?.participants?.length || 0,
-                    state: (callState as any)?.call?.state
+                    id: state?.call?.id,
+                    participants: state?.call?.participants?.length || 0,
+                    state: state?.call?.state
                 });
             } catch (error) {
                 console.warn(`⚠️ Could not fetch call state:`, error);

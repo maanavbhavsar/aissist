@@ -1,4 +1,4 @@
-import { eq,and,not } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import {OpenAI} from "openai"
 import { NextRequest,NextResponse } from "next/server";
 import {
@@ -44,7 +44,6 @@ const RATE_LIMIT_WINDOW = 60000; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 100; // Max requests per minute per IP
 
 function isRateLimited(ip: string): boolean {
-    const now = Date.now();
     const requests = webhookRequests.get(ip) || 0;
     
     if (requests >= RATE_LIMIT_MAX_REQUESTS) {
@@ -244,12 +243,14 @@ export async function POST(req:NextRequest){
 
         // Check if agent is already in the call to prevent duplicates
         const callState = await call.get();
-        const existingParticipants = (callState as any)?.call?.participants || (callState as any)?.call?.state?.participants || [];
-        const agentAlreadyPresent = existingParticipants.some((p: any) => p.user?.id === existingAgent.id || p.user_id === existingAgent.id);
+        type CallState = { call?: { participants?: Array<{ user?: { id?: string }; user_id?: string }>; state?: { participants?: Array<{ user?: { id?: string }; user_id?: string }> } } } };
+        const state = callState as unknown as CallState;
+        const existingParticipants = state?.call?.participants || state?.call?.state?.participants || [];
+        const agentAlreadyPresent = existingParticipants.some((p) => p.user?.id === existingAgent.id || p.user_id === existingAgent.id);
         
         if (agentAlreadyPresent) {
             console.log(`⚠️ Agent ${existingAgent.name} (${existingAgent.id}) already present in call ${meetingId} - skipping duplicate connection`);
-            console.log(`📊 Participants in call:`, existingParticipants.map((p: any) => ({ id: p.user?.id || p.user_id, name: p.user?.name })));
+            console.log(`📊 Participants in call:`, existingParticipants.map((p) => ({ id: p.user?.id || p.user_id, name: p.user?.name })));
             return NextResponse.json({ success: true, message: "Agent already connected" });
         }
         
@@ -288,6 +289,9 @@ export async function POST(req:NextRequest){
                 timestamp: new Date().toISOString()
             });
         
+        // Type for Stream Video client with OpenAI methods
+        type VideoClient = { connectToOpenAIRealtime?: unknown; connectOpenAi?: unknown };
+        
         let realtimeClient;
         try {
             console.log(`🔄 Step 1: Validating OpenAI API key...`);
@@ -304,7 +308,7 @@ export async function POST(req:NextRequest){
             
             // Check for both new and old method names for backward compatibility
             // Use dynamic property access to avoid TypeScript errors with new SDK versions
-            const videoClient = StreamVideo.video as any;
+            const videoClient = StreamVideo.video as unknown as VideoClient;
             const hasNewMethod = typeof videoClient.connectToOpenAIRealtime === 'function';
             const hasOldMethod = typeof videoClient.connectOpenAi === 'function';
             
@@ -397,8 +401,8 @@ Remember to introduce yourself when someone joins the call, and be proactive in 
                 availableMethods: Object.getOwnPropertyNames(StreamVideo.video).filter(name => 
                     name.includes('connect') || name.includes('OpenAi') || name.includes('openai') || name.includes('Realtime')
                 ),
-                hasNewMethod: typeof (StreamVideo.video as any).connectToOpenAIRealtime === 'function',
-                hasOldMethod: typeof (StreamVideo.video as any).connectOpenAi === 'function'
+                hasNewMethod: typeof (StreamVideo.video as unknown as VideoClient).connectToOpenAIRealtime === 'function',
+                hasOldMethod: typeof (StreamVideo.video as unknown as VideoClient).connectOpenAi === 'function'
             });
             
             // Try to provide specific troubleshooting advice

@@ -37,8 +37,9 @@ export const CallUI = ({ meetingName }: Props) => {
             console.log('🎥 Enabling video...');
             await call.camera.enable();
             console.log('✅ Video enabled successfully');
-          } catch (videoError: any) {
-            console.warn('⚠️ Could not enable video:', videoError?.message || videoError);
+          } catch (videoError: unknown) {
+            const errorMessage = videoError instanceof Error ? videoError.message : String(videoError);
+            console.warn('⚠️ Could not enable video:', errorMessage);
             // Video might not be allowed by call settings - that's okay
           }
         } else {
@@ -51,8 +52,9 @@ export const CallUI = ({ meetingName }: Props) => {
             console.log('🎤 Enabling audio...');
             await call.microphone.enable();
             console.log('✅ Audio enabled successfully');
-          } catch (audioError: any) {
-            console.warn('⚠️ Could not enable audio:', audioError?.message || audioError);
+          } catch (audioError: unknown) {
+            const errorMessage = audioError instanceof Error ? audioError.message : String(audioError);
+            console.warn('⚠️ Could not enable audio:', errorMessage);
           }
         } else {
           console.log('⚠️ Skipping audio enable - no browser permission');
