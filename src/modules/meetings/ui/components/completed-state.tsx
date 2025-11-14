@@ -22,7 +22,6 @@ export default function CompletedState({
   meetingId,
   meetingName,
   summary,
-  transcript,
   recordingUrl,
 }: CompletedStateProps) {
   const router = useRouter()
@@ -96,17 +95,17 @@ export default function CompletedState({
                 <div className="space-y-6">
                   <ReactMarkdown
                     components={{
-                      h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-white mb-4 mt-6 first:mt-0" {...props} />,
-                      h2: ({node, ...props}) => <h2 className="text-xl font-bold text-cyan-400 mb-3 mt-5 first:mt-0" {...props} />,
-                      h3: ({node, ...props}) => <h3 className="text-lg font-semibold text-white mb-3 mt-6 first:mt-0" {...props} />,
-                      h4: ({node, ...props}) => <h4 className="text-base font-semibold text-cyan-300 mb-2 mt-4 ml-6" {...props} />,
-                      p: ({node, ...props}) => <p className="text-slate-200 leading-relaxed mb-4" {...props} />,
-                      ul: ({node, ...props}) => <ul className="list-disc space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
-                      ol: ({node, ...props}) => <ol className="list-decimal space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
-                      li: ({node, ...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
-                      strong: ({node, ...props}) => <strong className="font-semibold text-white" {...props} />,
-                      em: ({node, ...props}) => <em className="italic text-slate-200" {...props} />,
-                      code: ({node, ...props}) => <code className="bg-slate-700/50 text-cyan-300 px-1.5 py-0.5 rounded text-sm" {...props} />,
+                      h1: ({...props}) => <h1 className="text-2xl font-bold text-white mb-4 mt-6 first:mt-0" {...props} />,
+                      h2: ({...props}) => <h2 className="text-xl font-bold text-cyan-400 mb-3 mt-5 first:mt-0" {...props} />,
+                      h3: ({...props}) => <h3 className="text-lg font-semibold text-white mb-3 mt-6 first:mt-0" {...props} />,
+                      h4: ({...props}) => <h4 className="text-base font-semibold text-cyan-300 mb-2 mt-4 ml-6" {...props} />,
+                      p: ({...props}) => <p className="text-slate-200 leading-relaxed mb-4" {...props} />,
+                      ul: ({...props}) => <ul className="list-disc space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
+                      ol: ({...props}) => <ol className="list-decimal space-y-2 mb-4 text-slate-200 ml-8 pl-2" {...props} />,
+                      li: ({...props}) => <li className="text-slate-200 leading-relaxed pl-1" {...props} />,
+                      strong: ({...props}) => <strong className="font-semibold text-white" {...props} />,
+                      em: ({...props}) => <em className="italic text-slate-200" {...props} />,
+                      code: ({...props}) => <code className="bg-slate-700/50 text-cyan-300 px-1.5 py-0.5 rounded text-sm" {...props} />,
                     }}
                   >
                     {summary}
