@@ -77,6 +77,22 @@ function markMessageProcessed(messageId: string): void {
     }, MESSAGE_CACHE_TTL);
 }
 
+// Deduplication for agent connections - track meetings where agent is being/has been connected
+const agentConnectionsInProgress = new Set<string>();
+const AGENT_CONNECTION_TTL = 2 * 60 * 1000; // 2 minutes
+
+function isAgentConnectionInProgress(meetingId: string): boolean {
+    return agentConnectionsInProgress.has(meetingId);
+}
+
+function markAgentConnectionInProgress(meetingId: string): void {
+    agentConnectionsInProgress.add(meetingId);
+    // Clean up after TTL
+    setTimeout(() => {
+        agentConnectionsInProgress.delete(meetingId);
+    }, AGENT_CONNECTION_TTL);
+}
+
 export async function POST(req:NextRequest){
     const clientIP = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
     
@@ -218,18 +234,27 @@ export async function POST(req:NextRequest){
         
         console.log(`✅ Agent found: ${existingAgent.name} (${existingAgent.id})`);
 
+        // Check if agent connection is already in progress for this meeting (deduplication)
+        if (isAgentConnectionInProgress(meetingId)) {
+            console.log(`⚠️ Agent connection already in progress for meeting ${meetingId} - skipping duplicate webhook`);
+            return NextResponse.json({ success: true, message: "Agent connection already in progress" });
+        }
+
         const call = StreamVideo.video.call("default",meetingId);
 
         // Check if agent is already in the call to prevent duplicates
         const callState = await call.get();
-        const existingParticipants = (callState as any)?.call?.participants || [];
-        const agentAlreadyPresent = existingParticipants.some((p: any) => p.user?.id === existingAgent.id);
+        const existingParticipants = (callState as any)?.call?.participants || (callState as any)?.call?.state?.participants || [];
+        const agentAlreadyPresent = existingParticipants.some((p: any) => p.user?.id === existingAgent.id || p.user_id === existingAgent.id);
         
         if (agentAlreadyPresent) {
             console.log(`⚠️ Agent ${existingAgent.name} (${existingAgent.id}) already present in call ${meetingId} - skipping duplicate connection`);
+            console.log(`📊 Participants in call:`, existingParticipants.map((p: any) => ({ id: p.user?.id || p.user_id, name: p.user?.name })));
             return NextResponse.json({ success: true, message: "Agent already connected" });
         }
         
+        // Mark connection as in progress to prevent race conditions
+        markAgentConnectionInProgress(meetingId);
         console.log(`✅ Agent not present yet - proceeding with connection`);
 
         const [meetingOwner] = await db

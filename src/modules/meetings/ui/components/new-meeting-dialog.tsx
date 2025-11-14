@@ -17,6 +17,7 @@ export const NewMeetingDialog = ({ open, onOpenChange }: NewMeetingDialogProps) 
             title="Create a new meeting" 
             description="Fill out the form below to schedule a new meeting with your AI agent." 
             showSearch={false}
+            maxContentHeight="max-h-80"
         >
             <MeetingForm
                 onSuccess={(id) => {

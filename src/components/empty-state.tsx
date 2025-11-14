@@ -6,7 +6,7 @@ interface Props {
     image?: string;
 }
 
-export const EmptyState = ({ title, description, image = "/empty.svg" }: Props) => {
+export const EmptyState = ({ title, description, image = "/coloredempty.png" }: Props) => {
     return (
         <div className="flex flex-col items-center justify-center text-center py-12">
             <Image src={image} alt="Empty State" width={240} height={240} className="mb-8" />

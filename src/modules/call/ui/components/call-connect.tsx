@@ -1,5 +1,5 @@
 import {Call,CallingState, StreamCall,StreamVideo,StreamVideoClient} from "@stream-io/video-react-sdk"
-import { LoaderIcon } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useMemo, useRef } from "react";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { CallUI } from "./call-ui";
@@ -88,8 +88,15 @@ export const CallConnect = ({
         return (
             <div className="flex h-screen justify-center items-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
                 <div className="flex flex-col items-center gap-4">
-                    <LoaderIcon className="size-8 animate-spin text-cyan-400"/>
-                    <p className="text-cyan-200 text-sm">Connecting to call...</p>
+                    <Image 
+                        src="/Science.png" 
+                        alt="Loading" 
+                        width={64} 
+                        height={64}
+                        className="animate-spin-slow"
+                        style={{ animationDuration: '3s' }}
+                    />
+                    <p className="text-xl font-medium bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Loading...</p>
                 </div>
             </div>
 

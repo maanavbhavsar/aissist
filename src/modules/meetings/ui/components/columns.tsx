@@ -79,9 +79,9 @@ export const columns: ColumnDef<MeetingGetMany["items"][number]>[] = [
       return (
         <Badge
           variant="outline"
-          className="capitalize"
+          className="capitalize text-white border-white/30"
         >
-          <Clock className="size-4 text-primary flex items-center gap-x-2" />
+          <Clock className="size-4 text-white flex items-center gap-x-2" />
           {row.original.duration ? formatDuration(row.original.duration) : "No duration"}
         </Badge>
       );

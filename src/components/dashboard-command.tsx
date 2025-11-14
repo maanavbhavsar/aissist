@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTRPC } from "@/trpc/client";
 import { useQuery } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const trpc = useTRPC();
+  const lastExecutionRef = useRef<{ key: string; timestamp: number } | null>(null);
 
   const { data: meetingsData } = useQuery(
     trpc.meetings.getMany.queryOptions({
@@ -34,12 +35,32 @@ export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
   );
 
   const handleMeetingSelect = (meetingId: string) => {
+    const now = Date.now();
+    const lastExec = lastExecutionRef.current;
+    const resourceKey = `meeting-${meetingId}`;
+    
+    // Prevent double execution within 100ms for the same resource type and ID
+    if (lastExec?.key === resourceKey && now - lastExec.timestamp < 100) {
+      return;
+    }
+    
+    lastExecutionRef.current = { key: resourceKey, timestamp: now };
     router.push(`/dashboard/meetings/${meetingId}`);
     setOpen(false);
     setSearch(""); // Clear search on selection
   };
 
   const handleAgentSelect = (agentId: string) => {
+    const now = Date.now();
+    const lastExec = lastExecutionRef.current;
+    const resourceKey = `agent-${agentId}`;
+    
+    // Prevent double execution within 100ms for the same resource type and ID
+    if (lastExec?.key === resourceKey && now - lastExec.timestamp < 100) {
+      return;
+    }
+    
+    lastExecutionRef.current = { key: resourceKey, timestamp: now };
     router.push(`/dashboard/agents/${agentId}`);
     setOpen(false);
     setSearch(""); // Clear search on selection
@@ -58,7 +79,7 @@ export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
       <CommandInput
         value={search}
         onValueChange={(val) => setSearch(val)}
-        placeholder="Search meetings and agents..."
+        placeholder="Type to search agents and meetings"
       />
       <CommandList className="max-h-[400px]">
         <CommandGroup heading="Meetings">
@@ -67,7 +88,23 @@ export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
               <CommandItem
                 key={meeting.id}
                 value={`meeting-${meeting.id}-${meeting.name}`}
-                onSelect={() => handleMeetingSelect(meeting.id)}
+                onSelect={(value) => {
+                  // Only handle if it's the correct value
+                  if (value === `meeting-${meeting.id}-${meeting.name}`) {
+                    handleMeetingSelect(meeting.id);
+                  }
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleMeetingSelect(meeting.id);
+                }}
+                onPointerDown={(e) => {
+                  // Handle pointer events as well
+                  if (e.button === 0) { // Left mouse button
+                    handleMeetingSelect(meeting.id);
+                  }
+                }}
                 className="cursor-pointer hover:bg-accent/50"
               >
                 {meeting.name}
@@ -84,7 +121,23 @@ export function DashboardCommand({ open, setOpen }: DashboardCommandProps) {
               <CommandItem
                 key={agent.id}
                 value={`agent-${agent.id}-${agent.name}`}
-                onSelect={() => handleAgentSelect(agent.id)}
+                onSelect={(value) => {
+                  // Only handle if it's the correct value
+                  if (value === `agent-${agent.id}-${agent.name}`) {
+                    handleAgentSelect(agent.id);
+                  }
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleAgentSelect(agent.id);
+                }}
+                onPointerDown={(e) => {
+                  // Handle pointer events as well
+                  if (e.button === 0) { // Left mouse button
+                    handleAgentSelect(agent.id);
+                  }
+                }}
                 className="cursor-pointer hover:bg-accent/50"
               >
                 <GeneratedAvatar

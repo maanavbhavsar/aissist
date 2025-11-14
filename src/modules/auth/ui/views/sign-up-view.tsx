@@ -83,25 +83,26 @@ export const SignUpView = () => {
     );
     };
     return (
-        <div className="flex flex-col gap-4 md:gap-6 w-full">
-            <Card className="overflow-hidden p-0 w-full max-w-5xl mx-auto">
-                <CardContent className="grid p-0 md:grid-cols-[1fr_1.5fr]"> 
-                    <div className="bg-white p-4 sm:p-6 md:p-8 flex items-center justify-center">
+        <div className="flex flex-col gap-4 md:gap-6 w-full relative">
+            <div className="w-full max-w-4xl mx-auto relative z-10 rounded-2xl border-2 border-slate-700/30 shadow-2xl shadow-slate-900/50 bg-slate-900/20 backdrop-blur-sm overflow-hidden">
+                <Card className="overflow-hidden p-0 w-full h-[65.00vh] max-h-[65.00vh] relative bg-transparent border-0 shadow-none">
+                <CardContent className="grid p-0 md:grid-cols-[1fr_1.5fr] h-full"> 
+                    <div className="bg-white px-4 sm:px-5 md:px-6 py-4 sm:py-5 md:py-5 flex justify-center overflow-y-auto">
                         <div className="w-full max-w-sm">
                         <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 md:gap-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2.5 md:gap-3">
                             <div className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
                                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
                                         Welcome
                                     </h1>
-                                    <img src="/aissist_colored_only.png" alt="AISSIST" className="h-4 w-4 sm:h-5 sm:w-5" />
+                                    <img src="/Aissist Logo.png" alt="AISSIST" className="h-5 w-auto sm:h-6 object-contain" />
                                 </div>
                                 <p className="text-xs sm:text-sm text-gray-600">
                                     Sign up to start your AISSIST journey
                                     </p>
                                 </div>
-                                <div className="grid gap-3">
+                                <div className="grid gap-2">
                                     <FormField
                                         control={form.control}
                                         name="name"
@@ -116,7 +117,7 @@ export const SignUpView = () => {
                                         )}
                                     />
                                 </div>
-                                <div className="grid gap-3">
+                                <div className="grid gap-2">
                                     <FormField
                                         control={form.control}
                                         name="email"
@@ -131,7 +132,7 @@ export const SignUpView = () => {
                                         )}
                                     />
                                 </div>
-                                <div className="grid gap-3">
+                                <div className="grid gap-2">
                                     <FormField
                                         control={form.control}
                                         name="password"
@@ -146,7 +147,7 @@ export const SignUpView = () => {
                                         )}
                                     />
                                 </div>
-                                <div className="grid gap-3">
+                                <div className="grid gap-2">
                                     <FormField
                                         control={form.control}
                                         name="confirmPassword"
@@ -174,7 +175,7 @@ export const SignUpView = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-3">
                                 <Button disabled={pending} onClick={() => authClient.signIn.social({provider: "google"})} variant="outline" type="button" className="w-full bg-gradient-to-br from-slate-800/80 to-slate-900/80 hover:from-slate-700/80 hover:to-slate-800/80 text-white border-cyan-500/30 hover:border-cyan-500/50 text-xs sm:text-sm transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-cyan-500/20">
                                     <FaGoogle className="mr-1 sm:mr-2 text-xs sm:text-sm" />
                                     <span className="truncate">Google</span>
@@ -191,13 +192,13 @@ export const SignUpView = () => {
                         </Form>
                         </div>
                     </div>
-                    <div className="hidden md:flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative flex-col gap-4 md:gap-6 p-6 md:p-8 overflow-y-auto max-h-screen">
-                        <div className="flex flex-col items-center gap-2">
-                            <div className="relative h-16 w-16 md:h-20 md:w-20 logo-glow overflow-hidden flex items-start justify-center">
+                    <div className="hidden md:flex bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative flex-col gap-3 md:gap-4 p-5 md:p-6 overflow-y-auto h-full">
+                        <div className="flex flex-col items-center gap-2 w-full">
+                            <div className="relative logo-glow flex items-center justify-center w-full px-4">
                                 <img 
-                                    src="/aissist_colored_only.png" 
+                                    src="/Aissist Logo.png" 
                                     alt="AISSIST Logo" 
-                                    className="logo-icon-only h-full w-full" 
+                                    className="h-16 w-auto md:h-20 object-contain" 
                                 />
                             </div>
                             <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">AISSIST</h2>
@@ -283,7 +284,8 @@ export const SignUpView = () => {
                         </div>
                     </div>
                 </CardContent>
-            </Card>
+                </Card>
+            </div>
 
             <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs sm:text-sm text-balance *:[a]:underline-offset-4 *:[a]:hover:underline">
                 &copy; {new Date().getFullYear()} AISSIST. All rights reserved.

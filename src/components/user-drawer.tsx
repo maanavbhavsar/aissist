@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { 
-  CreditCard,
   LogOut,
   X
 } from "lucide-react";
@@ -109,14 +108,6 @@ export function UserDrawer({
 
           {/* Menu Items */}
           <div className="space-y-2">
-            <Button
-              variant="ghost"
-              className="w-full justify-start h-12 text-slate-700 hover:bg-slate-100"
-            >
-              <CreditCard className="w-5 h-5 mr-3" />
-              <span className="text-base">Billing</span>
-            </Button>
-            
             <Button
               variant="ghost"
               onClick={() => {

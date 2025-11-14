@@ -59,7 +59,7 @@ export function AgentIdView({ agentId }: Props) {
 
   return (
     <>
-      <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
+      <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4 relative z-10">
         <div className="flex items-center justify-between">
           <Button
             onClick={() => router.push('/dashboard/agents')}

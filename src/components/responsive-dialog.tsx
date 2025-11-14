@@ -15,6 +15,7 @@ interface ResponsiveDialogProps {
   children: ReactNode;
   placeholder?: string;
   showSearch?: boolean;
+  maxContentHeight?: string;
 }
 
 export function ResponsiveDialog({
@@ -25,7 +26,8 @@ export function ResponsiveDialog({
   trigger,
   children,
   placeholder = "Find a meeting or agent...",
-  showSearch = true
+  showSearch = true,
+  maxContentHeight = "max-h-64"
 }: ResponsiveDialogProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -101,7 +103,7 @@ export function ResponsiveDialog({
                 )}
 
                 {/* Content */}
-                <div className="max-h-64 overflow-y-auto">
+                <div className={cn(maxContentHeight, "overflow-y-auto")}>
                   {children}
                 </div>
               </div>
@@ -161,7 +163,7 @@ export function ResponsiveDialog({
           )}
 
           {/* Content */}
-          <div className="max-h-64 overflow-y-auto">
+          <div className={cn(maxContentHeight, "overflow-y-auto")}>
             {children}
           </div>
         </DialogPrimitive.Content>
