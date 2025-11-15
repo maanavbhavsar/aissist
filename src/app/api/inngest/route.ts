@@ -3,59 +3,45 @@ import { inngest } from "@/inngest/client";
 import { meetingsProcessing, endMeetingOnTimeLimit } from "@/inngest/functions";
 import { NextRequest } from "next/server";
 
-// Create an API that serves the functions
+// Create Inngest handlers
 const handlers = serve({
   client: inngest,
-  functions: [
-    meetingsProcessing,
-    endMeetingOnTimeLimit,
-  ],
+  functions: [meetingsProcessing, endMeetingOnTimeLimit],
 });
 
 export const GET = handlers.GET;
 export const POST = handlers.POST;
 
-// Wrap PUT handler to handle empty bodies gracefully
-export async function PUT(req: NextRequest, context?: { params?: Promise<Record<string, string>> }) {
+export async function PUT(req: NextRequest) {
   try {
     const contentLength = req.headers.get("content-length");
     const contentType = req.headers.get("content-type");
-    
-    // If content-length is 0 or missing, return early
+
+    // Skip empty requests (common with Inngest pings)
     if (!contentLength || contentLength === "0") {
       return new Response(null, { status: 200 });
     }
-    
-    // Clone request to read body without consuming the stream
+
     const clonedReq = req.clone();
-    
-    try {
-      const body = await clonedReq.text();
-      
-      // If body is empty, return early
-      if (!body || body.trim() === "") {
-        return new Response(null, { status: 200 });
-      }
-      
-      // If content-type is JSON, validate JSON parsing
-      if (contentType?.includes("application/json")) {
-        try {
-          JSON.parse(body);
-        } catch {
-          // Invalid JSON - return early
-          return new Response(null, { status: 200 });
-        }
-      }
-      
-      // If we get here, body is valid - pass original request to Inngest
-      return handlers.PUT(req, context);
-    } catch (parseError) {
-      // If reading body fails, return empty response
-      console.warn("[Inngest] PUT request with invalid body, skipping:", parseError);
+    const body = await clonedReq.text();
+
+    if (!body.trim()) {
       return new Response(null, { status: 200 });
     }
+
+    // Validate JSON payload
+    if (contentType?.includes("application/json")) {
+      try {
+        JSON.parse(body);
+      } catch {
+        return new Response(null, { status: 200 });
+      }
+    }
+
+    // Valid body → forward to Inngest
+    // Inngest handlers in App Router mode only accept the request
+    return (handlers.PUT as (req: NextRequest) => Promise<Response>)(req);
   } catch (error) {
-    // Handle any other errors gracefully
     console.error("[Inngest] PUT handler error:", error);
     return new Response(null, { status: 200 });
   }

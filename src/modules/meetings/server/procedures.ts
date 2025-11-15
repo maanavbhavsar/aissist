@@ -38,8 +38,10 @@ export const meetingsRouter = createTRPCRouter({
         }
 
         // Generate Stream token
-        const exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour expiry
-        const iat = Math.floor(Date.now() / 1000);
+        // Set iat to 5 seconds in the past to account for clock skew between servers
+        const now = Math.floor(Date.now() / 1000);
+        const exp = now + 60 * 60; // 1 hour expiry
+        const iat = now - 5; // 5 seconds in the past to prevent "token used before issue" errors
         const token = streamVideo.generateUserToken({
             user_id: ctx.auth.user.id,
             exp,
