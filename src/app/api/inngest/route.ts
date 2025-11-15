@@ -3,11 +3,6 @@ import { inngest } from "@/inngest/client";
 import { meetingsProcessing, endMeetingOnTimeLimit } from "@/inngest/functions";
 import { NextRequest } from "next/server";
 
-// 🩹 FIX: manually declare the type Next.js expects
-type RouteContext = {
-  params: Record<string, string | string[]>;
-};
-
 // Create Inngest handlers
 const handlers = serve({
   client: inngest,
@@ -17,7 +12,7 @@ const handlers = serve({
 export const GET = handlers.GET;
 export const POST = handlers.POST;
 
-export async function PUT(req: NextRequest, context: RouteContext) {
+export async function PUT(req: NextRequest, context: any) {
   try {
     const contentLength = req.headers.get("content-length");
     const contentType = req.headers.get("content-type");
