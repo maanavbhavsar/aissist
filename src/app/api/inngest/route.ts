@@ -12,11 +12,12 @@ const handlers = serve({
 export const GET = handlers.GET;
 export const POST = handlers.POST;
 
-export async function PUT(req: NextRequest, context: any) {
+export async function PUT(req: NextRequest) {
   try {
     const contentLength = req.headers.get("content-length");
     const contentType = req.headers.get("content-type");
 
+    // Skip empty requests (common with Inngest pings)
     if (!contentLength || contentLength === "0") {
       return new Response(null, { status: 200 });
     }
@@ -24,8 +25,11 @@ export async function PUT(req: NextRequest, context: any) {
     const clonedReq = req.clone();
     const body = await clonedReq.text();
 
-    if (!body.trim()) return new Response(null, { status: 200 });
+    if (!body.trim()) {
+      return new Response(null, { status: 200 });
+    }
 
+    // Validate JSON payload
     if (contentType?.includes("application/json")) {
       try {
         JSON.parse(body);
@@ -34,7 +38,9 @@ export async function PUT(req: NextRequest, context: any) {
       }
     }
 
-    return handlers.PUT(req, context);
+    // Valid body → forward to Inngest
+    // Inngest handlers in App Router mode only accept the request
+    return (handlers.PUT as (req: NextRequest) => Promise<Response>)(req);
   } catch (error) {
     console.error("[Inngest] PUT handler error:", error);
     return new Response(null, { status: 200 });
