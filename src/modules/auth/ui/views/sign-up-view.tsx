@@ -213,18 +213,18 @@ export const SignUpView = () => {
                                     ✨ Tech Stack
                                 </h3>
                                 <div className="flex flex-wrap gap-1.5 md:gap-2">
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Python</span>
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">PyTorch</span>
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">TensorFlow</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Next.js</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">React</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">TypeScript</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Node.js</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">PostgreSQL</span>
                                     <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Drizzle ORM</span>
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">AWS</span>
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Docker</span>
-                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">LangChain</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Stream.io</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">OpenAI</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Inngest</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">tRPC</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Tailwind CSS</span>
+                                    <span className="px-2 md:px-3 py-1 bg-slate-700/60 text-white text-xs rounded-full border border-cyan-500/20">Vercel</span>
                                 </div>
                             </div>
 
