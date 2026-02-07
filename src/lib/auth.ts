@@ -7,7 +7,7 @@ import * as schema from "@/db/schema";
 export const auth = betterAuth({
     trustedOrigins: [
         "http://localhost:3000",
-        "https://enjoyingly-indissoluble-kasandra.ngrok-free.dev"
+        "https://enjoyingly-indissoluble-kasandra.ngrok-free.app"
     ],
     socialProviders: {
         github: { 

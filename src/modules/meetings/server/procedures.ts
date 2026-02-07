@@ -9,7 +9,7 @@ import { nanoid } from "nanoid";
 import { TRPCError } from "@trpc/server";
 import { MeetingStatus } from "../types";
 import { StreamTranscriptItem } from "../types";
-import { streamVideo } from "@/lib/stream-video";
+import { streamVideo, ensureCallTypePermissions } from "@/lib/stream-video";
 import { generateAvatarURI } from "@/lib/avatar";
 import { streamChatClient } from "@/lib/stream-chat";
 import JSONL from 'jsonl-parse-stringify';
@@ -17,14 +17,17 @@ import JSONL from 'jsonl-parse-stringify';
 export const meetingsRouter = createTRPCRouter({
     generateToken: protectedProcedure.mutation(async ({ ctx }) => {
         console.log(`🔄 Generating token for user: ${ctx.auth.user.id}`);
-        
+
+        // Ensure default call type has permissions for user role (fixes 403 JoinCall/ReadCall)
+        await ensureCallTypePermissions();
+
         // Upsert the logged-in user in Stream
         try {
             await streamVideo.upsertUsers([
                 {
                     id: ctx.auth.user.id,
                     name: ctx.auth.user.name,
-                    role: 'admin',
+                    role: 'user',
                     image: ctx.auth.user.image ?? generateAvatarURI({
                         seed: ctx.auth.user.name,
                         variant: 'initials',
@@ -408,7 +411,7 @@ export const meetingsRouter = createTRPCRouter({
                         id: userId,
                         name: userName,
                         image,
-                        role: 'admin',
+                        role: 'user',
                     })
                     console.log(`✅ User upserted successfully: ${userId}`)
                 } catch (upsertError) {
